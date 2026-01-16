@@ -53,8 +53,8 @@
 <!-- Recent Applicants Table -->
 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
     <div class="p-6 border-b border-slate-200 flex justify-between items-center">
-        <h3 class="font-bold text-slate-800">Pendaftar Terbaru</h3>
-        <a href="{{ route('admin.applicants.index') }}" class="text-sm text-sky-600 hover:text-sky-700 font-medium">
+        <h3 class="font-bold text-slate-800">Pendaftar SPMB Terbaru</h3>
+        <a href="{{ route('spmb.admin.index') }}" class="text-sm text-sky-600 hover:text-sky-700 font-medium">
             Lihat semua <i class="ph ph-arrow-right"></i>
         </a>
     </div>

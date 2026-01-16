@@ -42,10 +42,10 @@
                     <i class="ph ph-squares-four text-xl"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ route('admin.applicants.index') }}" 
-                   class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors border-l-4 border-transparent {{ request()->routeIs('admin.applicants.*') ? 'active' : '' }}">
+                <a href="{{ route('spmb.admin.index') }}" 
+                   class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors border-l-4 border-transparent {{ request()->routeIs('spmb.admin.*') ? 'active' : '' }}">
                     <i class="ph ph-user-plus text-xl"></i>
-                    <span>Pendaftar PPDB</span>
+                    <span>Pendaftar SPMB</span>
                 </a>
                 <a href="{{ route('teachers.index') }}" 
                    class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors border-l-4 border-transparent {{ request()->routeIs('teachers.*') ? 'active' : '' }}">
@@ -76,6 +76,11 @@
                    class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors border-l-4 border-transparent {{ request()->routeIs('spp.admin.*') ? 'active' : '' }}">
                     <i class="ph ph-money text-xl"></i>
                     <span>Kelola SPP</span>
+                </a>
+                <a href="{{ route('settings.index') }}" 
+                   class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors border-l-4 border-transparent {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+                    <i class="ph ph-gear text-xl"></i>
+                    <span>Pengaturan</span>
                 </a>
                 
                 <div class="pt-4 mt-4 border-t border-slate-800">

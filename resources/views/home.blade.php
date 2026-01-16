@@ -41,7 +41,7 @@
         </p>
         
         <div class="flex flex-wrap gap-4">
-            <a href="{{ route('ppdb.index') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
+            <a href="{{ route('spmb.index') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
                 <span>🎒</span> Daftar Sekarang <i class="ph ph-arrow-right"></i>
             </a>
             <a href="{{ route('check.spp') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all">
@@ -246,7 +246,7 @@
     <div class="container text-center relative z-10">
         <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4">🎉 Siap Bergabung Bersama Kami?</h2>
         <p class="text-white/80 text-lg mb-8 max-w-xl mx-auto">Daftarkan putra-putri Anda sekarang dan berikan pendidikan terbaik untuk masa depan mereka!</p>
-        <a href="{{ route('ppdb.index') }}" class="inline-flex items-center gap-3 px-8 py-4 bg-white text-purple-600 font-bold text-lg rounded-full shadow-2xl hover:scale-105 transition-transform">
+        <a href="{{ route('spmb.index') }}" class="inline-flex items-center gap-3 px-8 py-4 bg-white text-purple-600 font-bold text-lg rounded-full shadow-2xl hover:scale-105 transition-transform">
             <span>📝</span> Daftar Online Sekarang
         </a>
     </div>

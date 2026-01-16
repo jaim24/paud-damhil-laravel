@@ -24,6 +24,26 @@ class PpdbController extends Controller
 
         Applicant::create($data);
 
-        return redirect()->back()->with('success', 'Pendaftaran Berhasil! Silakan tunggu konfirmasi.');
+        return redirect()->back()->with('success', 'Pendaftaran Berhasil! Silakan cek status pendaftaran Anda secara berkala.');
+    }
+
+    public function showCheckStatus()
+    {
+        return view('spmb.check_status');
+    }
+
+    public function checkStatus(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required'
+        ]);
+
+        $applicant = Applicant::where('phone', $request->phone)->first();
+
+        if ($applicant) {
+            return view('spmb.check_status', compact('applicant'));
+        } else {
+            return redirect()->route('spmb.status')->with('not_found', true);
+        }
     }
 }

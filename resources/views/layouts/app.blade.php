@@ -44,7 +44,7 @@
             <div class="nav-links mobile-hidden">
                 <a href="{{ url('/') }}">Beranda</a>
                 <a href="{{ route('teachers.public') }}">Guru</a>
-                <a href="{{ route('ppdb.index') }}">PPDB</a>
+                <a href="{{ route('spmb.index') }}">SPMB</a>
                 <a href="{{ route('check.spp') }}">Cek SPP</a>
                 <!-- Admin Link -->
                 @auth
@@ -58,7 +58,7 @@
         <div id="mobileMenu" class="mobile-menu hidden">
             <a href="{{ url('/') }}">Beranda</a>
             <a href="{{ route('teachers.public') }}">Guru</a>
-            <a href="{{ route('ppdb.index') }}">PPDB</a>
+            <a href="{{ route('spmb.index') }}">SPMB</a>
             <a href="{{ route('check.spp') }}">Cek SPP</a>
             @auth
                 <a href="{{ route('dashboard') }}">Dashboard</a>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pendaftaran Murid Baru - PPDB')
+@section('title', 'Pendaftaran Murid Baru - SPMB')
 
 @section('content')
 <div class="min-h-screen py-12 relative overflow-hidden">
@@ -21,10 +21,10 @@
         <!-- Header -->
         <div class="text-center mb-8">
             <span class="inline-flex items-center gap-2 bg-gradient-to-r from-pink-100 to-purple-100 text-purple-600 px-4 py-2 rounded-full text-sm font-bold mb-4">
-                🎒 PPDB Tahun Ajaran {{ date('Y') }}/{{ date('Y') + 1 }}
+                🎒 SPMB Tahun Ajaran {{ date('Y') }}/{{ date('Y') + 1 }}
             </span>
             <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-2">
-                Pendaftaran Murid Baru
+                Seleksi Penerimaan Murid Baru
             </h1>
             <p class="text-slate-500">Isi formulir di bawah untuk mendaftarkan putra-putri Anda</p>
         </div>
@@ -38,7 +38,7 @@
             </div>
             @endif
 
-            <form action="{{ route('ppdb.store') }}" method="POST">
+            <form action="{{ route('spmb.store') }}" method="POST">
                 @csrf
                 
                 <!-- Section: Data Anak -->
@@ -97,9 +97,14 @@
         </div>
 
         <!-- Info -->
-        <p class="text-center text-slate-400 text-sm mt-6">
-            Butuh bantuan? Hubungi kami di <strong>0821-xxxx-xxxx</strong>
-        </p>
+        <div class="text-center mt-6 space-y-2">
+            <a href="{{ route('spmb.status') }}" class="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-semibold">
+                🔍 Sudah mendaftar? Cek Status Pendaftaran
+            </a>
+            <p class="text-slate-400 text-sm">
+                Butuh bantuan? Hubungi kami di <strong>0821-xxxx-xxxx</strong>
+            </p>
+        </div>
     </div>
 </div>
 

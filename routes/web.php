@@ -8,9 +8,11 @@ use App\Http\Controllers\AdminController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// PPDB Routes
-Route::get('/ppdb', [PpdbController::class, 'index'])->name('ppdb.index');
-Route::post('/ppdb', [PpdbController::class, 'store'])->name('ppdb.store');
+// SPMB Routes (formerly PPDB)
+Route::get('/spmb', [PpdbController::class, 'index'])->name('spmb.index');
+Route::post('/spmb', [PpdbController::class, 'store'])->name('spmb.store');
+Route::get('/spmb/cek-status', [PpdbController::class, 'showCheckStatus'])->name('spmb.status');
+Route::post('/spmb/cek-status', [PpdbController::class, 'checkStatus'])->name('spmb.check_status');
 
 // SPP Routes
 Route::get('/cek-spp', [SppController::class, 'index'])->name('check.spp');
@@ -27,7 +29,6 @@ Route::get('/guru', [App\Http\Controllers\TeacherPublicController::class, 'index
 // Routes untuk Admin (Dilindungi Middleware Auth)
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-    Route::get('/admin/applicants', [AdminController::class, 'applicants'])->name('admin.applicants.index');
     
     // Resource Routes
     Route::resource('teachers', \App\Http\Controllers\TeacherController::class);
@@ -35,6 +36,14 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('classes', \App\Http\Controllers\SchoolClassController::class);
     Route::resource('galleries', \App\Http\Controllers\GalleryController::class);
     Route::resource('news', \App\Http\Controllers\NewsController::class);
+    
+    // SPMB Admin Routes
+    Route::prefix('admin/spmb')->name('spmb.admin.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\ApplicantController::class, 'index'])->name('index');
+        Route::get('/{applicant}', [\App\Http\Controllers\ApplicantController::class, 'show'])->name('show');
+        Route::patch('/{applicant}/status', [\App\Http\Controllers\ApplicantController::class, 'updateStatus'])->name('update_status');
+        Route::delete('/{applicant}', [\App\Http\Controllers\ApplicantController::class, 'destroy'])->name('destroy');
+    });
     
     // SPP Admin Routes
     Route::prefix('admin/spp')->name('spp.admin.')->group(function () {
@@ -48,4 +57,8 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{sppInvoice}', [\App\Http\Controllers\SppAdminController::class, 'destroy'])->name('destroy');
         Route::patch('/{sppInvoice}/mark-paid', [\App\Http\Controllers\SppAdminController::class, 'markPaid'])->name('mark_paid');
     });
+    
+    // Settings Routes
+    Route::get('/admin/settings', [\App\Http\Controllers\SettingController::class, 'index'])->name('settings.index');
+    Route::put('/admin/settings', [\App\Http\Controllers\SettingController::class, 'update'])->name('settings.update');
 });
