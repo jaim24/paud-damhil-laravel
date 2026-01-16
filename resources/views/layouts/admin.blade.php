@@ -5,69 +5,135 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Dashboard') - PAUD Damhil UNG</title>
     <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .sidebar-link.active { background: rgba(14, 165, 233, 0.1); border-left-color: #0EA5E9; color: white; }
+    </style>
 </head>
-<body>
-    <div class="admin-layout">
+<body class="bg-slate-100 font-sans">
+    <div class="flex min-h-screen">
+        
         <!-- Sidebar -->
-        <aside class="admin-aside">
-            <div class="brand">
-                <i class="ph-fill ph-graduation-cap" style="color: var(--primary)"></i>
-                <span>PAUD Damhil</span>
+        <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-slate-900 text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-50">
+            <!-- Brand -->
+            <div class="h-16 flex items-center gap-3 px-6 border-b border-slate-800">
+                <i class="ph-fill ph-graduation-cap text-2xl text-sky-400"></i>
+                <span class="font-bold text-lg">PAUD Damhil</span>
             </div>
-            <div class="menu">
-                <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    <i class="ph ph-squares-four"></i> Dashboard
+
+            <!-- Menu -->
+            <nav class="p-4 space-y-1">
+                <a href="{{ route('dashboard') }}" 
+                   class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors border-l-4 border-transparent {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <i class="ph ph-squares-four text-xl"></i>
+                    <span>Dashboard</span>
                 </a>
-                <a href="{{ route('teachers.index') }}" class="{{ request()->routeIs('teachers.*') ? 'active' : '' }}">
-                    <i class="ph ph-chalkboard-teacher"></i> Data Guru
+                <a href="{{ route('admin.applicants.index') }}" 
+                   class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors border-l-4 border-transparent {{ request()->routeIs('admin.applicants.*') ? 'active' : '' }}">
+                    <i class="ph ph-user-plus text-xl"></i>
+                    <span>Pendaftar PPDB</span>
                 </a>
-                <a href="{{ route('students.index') }}" class="{{ request()->routeIs('students.*') ? 'active' : '' }}">
-                    <i class="ph ph-student"></i> Data Siswa
+                <a href="{{ route('teachers.index') }}" 
+                   class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors border-l-4 border-transparent {{ request()->routeIs('teachers.*') ? 'active' : '' }}">
+                    <i class="ph ph-chalkboard-teacher text-xl"></i>
+                    <span>Data Guru</span>
                 </a>
-                <a href="{{ route('classes.index') }}" class="{{ request()->routeIs('classes.*') ? 'active' : '' }}">
-                    <i class="ph ph-books"></i> Data Kelas
+                <a href="{{ route('students.index') }}" 
+                   class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors border-l-4 border-transparent {{ request()->routeIs('students.*') ? 'active' : '' }}">
+                    <i class="ph ph-student text-xl"></i>
+                    <span>Data Siswa</span>
                 </a>
-                 <a href="{{ route('home') }}" target="_blank">
-                    <i class="ph ph-globe"></i> Lihat Website
+                <a href="{{ route('classes.index') }}" 
+                   class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors border-l-4 border-transparent {{ request()->routeIs('classes.*') ? 'active' : '' }}">
+                    <i class="ph ph-books text-xl"></i>
+                    <span>Data Kelas</span>
+                </a>
+                <a href="{{ route('galleries.index') }}" 
+                   class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors border-l-4 border-transparent {{ request()->routeIs('galleries.*') ? 'active' : '' }}">
+                    <i class="ph ph-images text-xl"></i>
+                    <span>Galeri Kegiatan</span>
+                </a>
+                <a href="{{ route('news.index') }}" 
+                   class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors border-l-4 border-transparent {{ request()->routeIs('news.*') ? 'active' : '' }}">
+                    <i class="ph ph-newspaper text-xl"></i>
+                    <span>Berita & Pengumuman</span>
+                </a>
+                <a href="{{ route('spp.admin.index') }}" 
+                   class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors border-l-4 border-transparent {{ request()->routeIs('spp.admin.*') ? 'active' : '' }}">
+                    <i class="ph ph-money text-xl"></i>
+                    <span>Kelola SPP</span>
                 </a>
                 
-                <form action="{{ route('logout') }}" method="POST" style="margin-top: 20px; padding: 0 25px;">
+                <div class="pt-4 mt-4 border-t border-slate-800">
+                    <a href="{{ route('home') }}" target="_blank"
+                       class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+                        <i class="ph ph-globe text-xl"></i>
+                        <span>Lihat Website</span>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Logout -->
+            <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-800">
+                <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn btn-secondary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
-                        <i class="ph ph-sign-out"></i> Logout
+                    <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-800 hover:bg-red-600 text-slate-400 hover:text-white rounded-lg transition-colors">
+                        <i class="ph ph-sign-out text-xl"></i>
+                        <span>Logout</span>
                     </button>
                 </form>
             </div>
         </aside>
 
         <!-- Main Content -->
-        <main class="admin-main">
+        <main class="flex-1 lg:ml-64">
             <!-- Top Header -->
-            <header class="admin-header">
-                <div style="display:flex; align-items:center; gap:15px;">
-                     <!-- Mobile Toggle -->
-                     <button onclick="toggleSidebar()" style="background:none; border:none; font-size:1.5rem; color:var(--secondary); display:none;" class="mobile-toggle">
-                        <i class="ph ph-list"></i>
-                     </button>
-                     <h2 style="font-size: 1.1rem; margin:0;">@yield('title')</h2>
+            <header class="sticky top-0 z-40 h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 lg:px-8">
+                <div class="flex items-center gap-4">
+                    <!-- Mobile Toggle -->
+                    <button onclick="toggleSidebar()" class="lg:hidden p-2 -ml-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+                        <i class="ph ph-list text-2xl"></i>
+                    </button>
+                    <h1 class="text-lg font-bold text-slate-800">@yield('title')</h1>
                 </div>
-                <div style="display:flex; align-items:center; gap: 15px;">
-                    <span style="font-size: 0.9rem; color: var(--text-main);">Halo, Admin</span>
-                    <div style="background: var(--primary); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                        <i class="ph ph-user"></i>
+                <div class="flex items-center gap-3">
+                    <span class="text-sm text-slate-500 hidden sm:block">Halo, Admin</span>
+                    <div class="w-9 h-9 bg-gradient-to-br from-sky-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+                        A
                     </div>
                 </div>
             </header>
 
-            <!-- Content -->
-            <div class="admin-content-wrapper">
+            <!-- Page Content -->
+            <div class="p-4 lg:p-8">
+                <!-- Success Alert -->
                 @if(session('success'))
-                    <div class="alert alert-success" style="background:#dcfce7; color:#166534; padding:15px; border-radius:8px; margin-bottom:20px;">
-                        <i class="ph ph-check-circle"></i> {{ session('success') }}
-                    </div>
+                <div class="mb-6 flex items-center gap-3 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl">
+                    <i class="ph-fill ph-check-circle text-xl"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+                @endif
+
+                <!-- Error Alert -->
+                @if(session('error'))
+                <div class="mb-6 flex items-center gap-3 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
+                    <i class="ph-fill ph-warning-circle text-xl"></i>
+                    <span>{{ session('error') }}</span>
+                </div>
                 @endif
 
                 @yield('content')
@@ -76,23 +142,15 @@
     </div>
 
     <!-- Mobile Sidebar Overlay -->
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div id="overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden"></div>
 
     <script>
         function toggleSidebar() {
-            document.querySelector('.admin-aside').classList.toggle('show');
-            document.querySelector('.sidebar-overlay').classList.toggle('show');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
         }
-        
-        // Add table responsive wrapper automatically
-        document.querySelectorAll('table').forEach(table => {
-            if (!table.parentElement.classList.contains('table-responsive')) {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'table-responsive';
-                table.parentNode.insertBefore(wrapper, table);
-                wrapper.appendChild(table);
-            }
-        });
     </script>
 </body>
 </html>

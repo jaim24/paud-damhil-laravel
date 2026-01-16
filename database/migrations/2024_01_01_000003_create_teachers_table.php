@@ -11,8 +11,13 @@ return new class extends Migration
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('position'); // Kepala Sekolah, Guru, Staf
+            $table->string('position');
+            $table->string('education')->nullable();
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->string('photo')->nullable();
+            $table->integer('experience_years')->nullable();
+            $table->string('motto')->nullable();
+            $table->boolean('show_public')->default(true);
             $table->timestamps();
         });
     }

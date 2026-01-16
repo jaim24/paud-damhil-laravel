@@ -10,9 +10,14 @@ return new class extends Migration
     {
         Schema::create('school_classes', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // e.g., Kelompok A
-            $table->string('teacher_id')->nullable(); // Wali Kelas (Optional for now)
+            $table->string('name');
+            $table->string('age_group')->nullable();
+            $table->unsignedBigInteger('teacher_id')->nullable();
+            $table->string('academic_year')->nullable();
+            $table->text('learning_focus')->nullable();
             $table->timestamps();
+
+            $table->foreign('teacher_id')->references('id')->on('teachers')->onDelete('set null');
         });
     }
 

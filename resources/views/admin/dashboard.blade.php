@@ -3,96 +3,121 @@
 @section('title', 'Dashboard Ringkasan')
 
 @section('content')
-<div class="stat-grid">
-    <div class="stat-widget">
-        <div class="stat-icon" style="background: #e0f2fe; color: var(--primary)">
-            <i class="ph ph-users"></i>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Students -->
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 flex items-center gap-4">
+        <div class="w-14 h-14 bg-sky-100 text-sky-600 rounded-xl flex items-center justify-center">
+            <i class="ph ph-users text-2xl"></i>
         </div>
         <div>
-            <h3 style="margin:0; font-size:1.5rem">{{ $students_count }}</h3>
-            <span style="color: var(--gray); font-size: 0.9rem">Total Siswa</span>
-        </div>
-    </div>
-    
-    <div class="stat-widget">
-        <div class="stat-icon" style="background: #f3e8ff; color: #9333ea">
-            <i class="ph ph-chalkboard-teacher"></i>
-        </div>
-        <div>
-            <h3 style="margin:0; font-size:1.5rem">{{ $teachers_count }}</h3>
-            <span style="color: var(--gray); font-size: 0.9rem">Total Guru</span>
+            <h3 class="text-2xl font-bold text-slate-800">{{ $students_count }}</h3>
+            <p class="text-slate-500 text-sm">Total Siswa</p>
         </div>
     </div>
 
-    <div class="stat-widget">
-        <div class="stat-icon" style="background: #dcfce7; color: var(--accent-green)">
-            <i class="ph ph-books"></i>
+    <!-- Teachers -->
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 flex items-center gap-4">
+        <div class="w-14 h-14 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center">
+            <i class="ph ph-chalkboard-teacher text-2xl"></i>
         </div>
         <div>
-            <h3 style="margin:0; font-size:1.5rem">{{ $classes_count }}</h3>
-            <span style="color: var(--gray); font-size: 0.9rem">Total Kelas</span>
+            <h3 class="text-2xl font-bold text-slate-800">{{ $teachers_count }}</h3>
+            <p class="text-slate-500 text-sm">Total Guru</p>
         </div>
     </div>
 
-    <div class="stat-widget">
-        <div class="stat-icon" style="background: #ffedd5; color: #ea580c">
-             <i class="ph ph-user-plus"></i>
+    <!-- Classes -->
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 flex items-center gap-4">
+        <div class="w-14 h-14 bg-green-100 text-green-600 rounded-xl flex items-center justify-center">
+            <i class="ph ph-books text-2xl"></i>
         </div>
         <div>
-            <h3 style="margin:0; font-size:1.5rem">{{ $applicants_count }}</h3>
-            <span style="color: var(--gray); font-size: 0.9rem">Pendaftar Baru</span>
+            <h3 class="text-2xl font-bold text-slate-800">{{ $classes_count }}</h3>
+            <p class="text-slate-500 text-sm">Total Kelas</p>
+        </div>
+    </div>
+
+    <!-- Applicants -->
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 flex items-center gap-4">
+        <div class="w-14 h-14 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center">
+            <i class="ph ph-user-plus text-2xl"></i>
+        </div>
+        <div>
+            <h3 class="text-2xl font-bold text-slate-800">{{ $applicants_count }}</h3>
+            <p class="text-slate-500 text-sm">Pendaftar Baru</p>
         </div>
     </div>
 </div>
 
-<div class="card">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h3 style="margin:0">Pendaftar Terbaru</h3>
-        <a href="{{ route('admin.applicants.index') }}" style="font-size:0.9rem; text-decoration:none; color:var(--primary)">Lihat semua</a>
+<!-- Recent Applicants Table -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+    <div class="p-6 border-b border-slate-200 flex justify-between items-center">
+        <h3 class="font-bold text-slate-800">Pendaftar Terbaru</h3>
+        <a href="{{ route('admin.applicants.index') }}" class="text-sm text-sky-600 hover:text-sky-700 font-medium">
+            Lihat semua <i class="ph ph-arrow-right"></i>
+        </a>
     </div>
     
-    <table class="table-modern">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Nama Anak</th>
-                <th>Orang Tua</th>
-                <th>Tanggal Daftar</th>
-                <th>Status</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($applicants as $index => $a)
-            <tr>
-                <td>{{ $index + 1 }}</td>
-                <td>
-                    <b>{{ $a->child_name }}</b>
-                    <br><small style="color:#94a3b8">{{ $a->birth_date }}</small>
-                </td>
-                <td>
-                    {{ $a->parent_name }}<br>
-                    <small style="color:#94a3b8">{{ $a->phone }}</small>
-                </td>
-                <td>{{ $a->created_at->format('d M Y') }}</td>
-                <td>
-                    <span class="badge badge-warning">{{ $a->status }}</span>
-                </td>
-                <td>
-                    <button class="btn btn-outline" style="padding:4px 10px; font-size:0.75rem;">Detail</button>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="6" class="text-center" style="padding:30px; color:var(--gray)">Belum ada data pendaftar terbaru.</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-slate-50">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">#</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Nama Anak</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Orang Tua</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Tanggal</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                @forelse($applicants as $index => $a)
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-6 py-4 text-slate-600">{{ $index + 1 }}</td>
+                    <td class="px-6 py-4">
+                        <p class="font-semibold text-slate-800">{{ $a->child_name }}</p>
+                        <p class="text-sm text-slate-400">{{ $a->birth_date }}</p>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p class="text-slate-700">{{ $a->parent_name }}</p>
+                        <p class="text-sm text-slate-400">{{ $a->phone }}</p>
+                    </td>
+                    <td class="px-6 py-4 text-slate-600">{{ $a->created_at->format('d M Y') }}</td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+                            {{ $a->status }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <button class="text-sm px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors">
+                            Detail
+                        </button>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-slate-400">
+                        <i class="ph ph-folder-open text-4xl mb-2 block"></i>
+                        Belum ada data pendaftar terbaru.
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<div class="card">
-    <h3>Informasi Sistem</h3>
-    <p style="color: var(--text-main);">Selamat datang di Panel Admin PAUD Damhil UNG. Gunakan menu di sebelah kiri untuk mengelola data sekolah.</p>
+<!-- Info Card -->
+<div class="bg-gradient-to-r from-sky-500 to-blue-600 rounded-xl p-6 text-white">
+    <div class="flex items-start gap-4">
+        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
+            <i class="ph ph-info text-2xl"></i>
+        </div>
+        <div>
+            <h3 class="font-bold text-lg mb-1">Selamat Datang di Panel Admin</h3>
+            <p class="text-sky-100">Gunakan menu di sebelah kiri untuk mengelola data guru, siswa, kelas, dan pendaftar PPDB. Semua perubahan akan langsung tersimpan di database.</p>
+        </div>
+    </div>
 </div>
 @endsection

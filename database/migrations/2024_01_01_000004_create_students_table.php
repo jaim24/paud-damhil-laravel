@@ -10,9 +10,16 @@ return new class extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
-            $table->string('nisn')->unique();
+            $table->string('nisn')->nullable(); // Now nullable for TK
             $table->string('name');
-            $table->string('class_group'); // Kelompok A, B
+            $table->enum('gender', ['L', 'P'])->default('L');
+            $table->string('class_group');
+            $table->string('academic_year')->nullable();
+            $table->enum('status', ['active', 'graduated', 'inactive'])->default('active');
+            $table->string('parent_name')->nullable();
+            $table->string('parent_phone')->nullable();
+            $table->text('notes')->nullable();
+            $table->boolean('show_public')->default(false);
             $table->timestamps();
         });
     }
