@@ -34,9 +34,13 @@
     <!-- Navbar -->
     <nav class="navbar">
         <div class="container nav-container">
-            <a href="{{ url('/') }}" class="logo">
-                <i class="ph-fill ph-graduation-cap"></i>
-                PAUD Damhil UNG
+            <a href="{{ url('/') }}" class="logo flex items-center gap-2">
+                @if($settings->logo)
+                <img src="{{ asset('storage/' . $settings->logo) }}" alt="Logo" class="h-10 w-10 object-contain rounded-lg">
+                @else
+                <i class="ph-fill ph-graduation-cap text-2xl"></i>
+                @endif
+                <span class="font-bold">{{ $settings->school_name ?? 'PAUD Damhil UNG' }}</span>
             </a>
             <button class="mobile-menu-btn" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
                 <i class="ph ph-list"></i>
@@ -97,11 +101,15 @@
                 <!-- Brand -->
                 <div class="lg:col-span-2">
                     <h3 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                        @if($settings->logo)
+                        <img src="{{ asset('storage/' . $settings->logo) }}" alt="Logo" class="h-8 w-auto">
+                        @else
                         <i class="ph-fill ph-graduation-cap text-sky-400"></i>
-                        PAUD Damhil UNG
+                        @endif
+                        {{ $settings->school_name ?? 'PAUD Damhil UNG' }}
                     </h3>
                     <p class="text-slate-400 leading-relaxed mb-6">
-                        Membangun generasi emas yang cerdas, ceria, dan berakhlak mulia. Pendidikan anak usia dini yang berkualitas untuk masa depan Indonesia.
+                        {{ $settings->about ?? 'Membangun generasi emas yang cerdas, ceria, dan berakhlak mulia. Pendidikan anak usia dini yang berkualitas untuk masa depan Indonesia.' }}
                     </p>
                     <!-- Social Icons -->
                     <div class="flex gap-3">
@@ -123,15 +131,17 @@
                     <ul class="space-y-3 text-slate-400">
                         <li class="flex items-start gap-3">
                             <i class="ph ph-whatsapp-logo text-lg mt-1"></i>
-                            <span>0812-3456-7890</span>
+                            <span>{{ $settings->contact_phone ?? '0812-3456-7890' }}</span>
                         </li>
+                        @if($settings->email)
                         <li class="flex items-start gap-3">
                             <i class="ph ph-envelope text-lg mt-1"></i>
-                            <span>info@pauddamhil.sch.id</span>
+                            <span>{{ $settings->email }}</span>
                         </li>
+                        @endif
                         <li class="flex items-start gap-3">
                             <i class="ph ph-map-pin text-lg mt-1"></i>
-                            <span>Jl. Jend. Sudirman No. 1, Kota Gorontalo</span>
+                            <span>{{ $settings->contact_address ?? 'Jl. Jend. Sudirman No. 1, Kota Gorontalo' }}</span>
                         </li>
                     </ul>
                 </div>
@@ -160,7 +170,7 @@
         <!-- Copyright -->
         <div class="border-t border-slate-800 py-6">
             <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm">
-                <p>&copy; {{ date('Y') }} PAUD Damhil UNG. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} {{ $settings->school_name ?? 'PAUD Damhil UNG' }}. All rights reserved.</p>
                 <p>Dibangun dengan <i class="ph-fill ph-heart text-red-500"></i> di Gorontalo</p>
             </div>
         </div>

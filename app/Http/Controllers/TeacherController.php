@@ -8,9 +8,20 @@ use Illuminate\Support\Facades\Storage;
 
 class TeacherController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $teachers = Teacher::latest()->get();
+        $query = Teacher::latest();
+        
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('position', 'like', "%{$search}%");
+            });
+        }
+        
+        $teachers = $query->paginate(10)->withQueryString();
         return view('admin.teachers.index', compact('teachers'));
     }
 

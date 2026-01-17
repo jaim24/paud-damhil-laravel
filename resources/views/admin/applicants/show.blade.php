@@ -3,7 +3,7 @@
 @section('title', 'Detail Pendaftar')
 
 @section('content')
-<div class="max-w-3xl">
+<div class="max-w-4xl">
     <a href="{{ route('spmb.admin.index') }}" class="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 mb-6 transition-colors">
         <i class="ph ph-arrow-left"></i>
         Kembali ke Daftar Pendaftar
@@ -18,7 +18,7 @@
                 </div>
                 <div>
                     <h2 class="text-2xl font-bold">{{ $applicant->child_name }}</h2>
-                    <p class="text-white/80">Pendaftar SPMB {{ $applicant->created_at->format('Y') }}</p>
+                    <p class="text-white/80">{{ $applicant->nickname ? '(' . $applicant->nickname . ')' : '' }} Pendaftar SPMB {{ $applicant->created_at->format('Y') }}</p>
                 </div>
             </div>
         </div>
@@ -39,31 +39,204 @@
         </div>
 
         <!-- Details -->
-        <div class="p-6 space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="text-sm text-slate-500">Nama Lengkap Anak</label>
-                    <p class="font-semibold text-slate-800">{{ $applicant->child_name }}</p>
+        <div class="p-6 space-y-8">
+            
+            <!-- Section A: Data Murid -->
+            <div>
+                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <span class="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center text-sm">A</span>
+                    Keterangan Murid
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                        <label class="text-xs text-slate-500">Nama Lengkap</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->child_name }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Nama Panggilan</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->nickname ?? '-' }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Jenis Kelamin</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->gender_label }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Tempat Lahir</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->birth_place }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Tanggal Lahir</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->birth_date->format('d F Y') }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Agama</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->religion ?? '-' }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Kewarganegaraan</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->citizenship }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Anak Ke</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->child_order }} dari {{ $applicant->siblings_kandung + 1 }} bersaudara</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Bahasa Sehari-hari</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->daily_language ?? '-' }}</p>
+                    </div>
                 </div>
-                <div>
-                    <label class="text-sm text-slate-500">Tanggal Lahir</label>
-                    <p class="font-semibold text-slate-800">{{ $applicant->birth_date->format('d F Y') }}</p>
+
+                <!-- Keadaan Jasmani -->
+                <div class="mt-4 p-4 bg-slate-50 rounded-xl">
+                    <label class="text-xs text-slate-500 block mb-2">Keadaan Jasmani</label>
+                    <div class="flex flex-wrap gap-4 text-sm">
+                        <span class="text-slate-700"><strong>BB:</strong> {{ $applicant->weight ?? '-' }}</span>
+                        <span class="text-slate-700"><strong>TB:</strong> {{ $applicant->height ?? '-' }}</span>
+                        <span class="text-slate-700"><strong>Ling. Kepala:</strong> {{ $applicant->head_circumference ?? '-' }}</span>
+                        <span class="text-slate-700"><strong>Gol. Darah:</strong> {{ $applicant->blood_type ?? '-' }}</span>
+                    </div>
                 </div>
-                <div>
-                    <label class="text-sm text-slate-500">Nama Orang Tua / Wali</label>
-                    <p class="font-semibold text-slate-800">{{ $applicant->parent_name }}</p>
+
+                <!-- Alamat -->
+                <div class="mt-4">
+                    <label class="text-xs text-slate-500">Alamat</label>
+                    <p class="font-semibold text-slate-800">{{ $applicant->address_street }}</p>
+                    <p class="text-slate-600 text-sm">
+                        {{ $applicant->address_kelurahan ? 'Kel. ' . $applicant->address_kelurahan : '' }}
+                        {{ $applicant->address_kecamatan ? ', Kec. ' . $applicant->address_kecamatan : '' }}
+                    </p>
                 </div>
-                <div>
-                    <label class="text-sm text-slate-500">Nomor HP / WhatsApp</label>
-                    <p class="font-semibold text-slate-800">{{ $applicant->phone }}</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <div>
+                        <label class="text-xs text-slate-500">Tinggal Dengan</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->living_with_label }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Jarak ke Sekolah</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->distance_km ?? '-' }} KM / {{ $applicant->distance_minutes ?? '-' }} Menit</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Transportasi</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->transportation ?? '-' }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Hobi</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->hobby ?? '-' }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Cita-cita</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->aspiration ?? '-' }}</p>
+                    </div>
                 </div>
-                <div class="md:col-span-2">
-                    <label class="text-sm text-slate-500">Alamat</label>
-                    <p class="font-semibold text-slate-800">{{ $applicant->address }}</p>
+            </div>
+
+            <!-- Section B: Data Orang Tua -->
+            <div class="border-t border-slate-200 pt-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <span class="w-8 h-8 bg-sky-100 text-sky-600 rounded-lg flex items-center justify-center text-sm">B</span>
+                    Keterangan Orang Tua / Wali
+                </h3>
+                
+                <!-- Ayah -->
+                <div class="p-4 bg-blue-50 rounded-xl mb-4">
+                    <h4 class="font-bold text-blue-700 mb-3">👨 Data Ayah</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                        <div>
+                            <label class="text-xs text-blue-600">Nama</label>
+                            <p class="font-semibold text-slate-800">{{ $applicant->father_name }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs text-blue-600">Tahun Lahir</label>
+                            <p class="font-semibold text-slate-800">{{ $applicant->father_birth_year ?? '-' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs text-blue-600">Pendidikan</label>
+                            <p class="font-semibold text-slate-800">{{ $applicant->father_education ?? '-' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs text-blue-600">Pekerjaan</label>
+                            <p class="font-semibold text-slate-800">{{ $applicant->father_job ?? '-' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs text-blue-600">Penghasilan</label>
+                            <p class="font-semibold text-slate-800">{{ $applicant->father_income ?? '-' }}</p>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="text-sm text-slate-500">Tanggal Mendaftar</label>
-                    <p class="font-semibold text-slate-800">{{ $applicant->created_at->format('d F Y, H:i') }}</p>
+
+                <!-- Ibu -->
+                <div class="p-4 bg-pink-50 rounded-xl mb-4">
+                    <h4 class="font-bold text-pink-700 mb-3">👩 Data Ibu</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                        <div>
+                            <label class="text-xs text-pink-600">Nama</label>
+                            <p class="font-semibold text-slate-800">{{ $applicant->mother_name }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs text-pink-600">Tahun Lahir</label>
+                            <p class="font-semibold text-slate-800">{{ $applicant->mother_birth_year ?? '-' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs text-pink-600">Pendidikan</label>
+                            <p class="font-semibold text-slate-800">{{ $applicant->mother_education ?? '-' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs text-pink-600">Pekerjaan</label>
+                            <p class="font-semibold text-slate-800">{{ $applicant->mother_job ?? '-' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs text-pink-600">Penghasilan</label>
+                            <p class="font-semibold text-slate-800">{{ $applicant->mother_income ?? '-' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wali -->
+                @if($applicant->guardian_name)
+                <div class="p-4 bg-amber-50 rounded-xl">
+                    <h4 class="font-bold text-amber-700 mb-3">👤 Data Wali</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                        <div>
+                            <label class="text-xs text-amber-600">Nama</label>
+                            <p class="font-semibold text-slate-800">{{ $applicant->guardian_name }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs text-amber-600">Hubungan</label>
+                            <p class="font-semibold text-slate-800">{{ $applicant->guardian_relationship ?? '-' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs text-amber-600">Pendidikan</label>
+                            <p class="font-semibold text-slate-800">{{ $applicant->guardian_education ?? '-' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs text-amber-600">Pekerjaan</label>
+                            <p class="font-semibold text-slate-800">{{ $applicant->guardian_job ?? '-' }}</p>
+                        </div>
+                    </div>
+                </div>
+                @endif
+            </div>
+
+            <!-- Section C: Kontak -->
+            <div class="border-t border-slate-200 pt-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <span class="w-8 h-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center text-sm">C</span>
+                    Informasi Kontak
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="text-xs text-slate-500">No. HP / WhatsApp</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->phone }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Email</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->email ?? '-' }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500">Tanggal Mendaftar</label>
+                        <p class="font-semibold text-slate-800">{{ $applicant->created_at->format('d F Y, H:i') }}</p>
+                    </div>
                 </div>
             </div>
 

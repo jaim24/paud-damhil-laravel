@@ -27,6 +27,12 @@ class SettingController extends Controller
             'about' => 'nullable|string',
             'vision' => 'nullable|string',
             'mission' => 'nullable|string',
+            // SPMB Settings
+            'spmb_status' => 'required|in:open,closed,waitlist_only',
+            'spmb_quota' => 'nullable|integer|min:1',
+            'spmb_start_date' => 'nullable|date',
+            'spmb_end_date' => 'nullable|date',
+            'spmb_closed_message' => 'nullable|string',
         ]);
 
         $settings = Setting::first();

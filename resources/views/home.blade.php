@@ -5,6 +5,13 @@
 @section('content')
 <!-- Hero Section with Fun Decorations -->
 <section class="hero relative overflow-hidden">
+    <!-- Background Image with Overlay -->
+    <div class="absolute inset-0">
+        <img src="{{ asset('images/hero-background.jpg') }}" alt="PAUD Damhil" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-b from-white/85 via-white/80 to-white/90"></div>
+    </div>
+    
+    <!-- Floating Decorations -->
     <!-- Floating Decorations -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
         <!-- Stars -->
@@ -28,19 +35,26 @@
         <div class="absolute bottom-40 left-10 text-5xl opacity-50 animate-wiggle" style="animation-delay: 1s;">📚</div>
     </div>
 
-    <div class="container relative z-10">
+    <div class="container relative z-10 text-center">
+        <!-- Logo -->
+        @if($settings->logo)
+        <div class="mb-6">
+            <img src="{{ asset('storage/' . $settings->logo) }}" alt="Logo" class="h-24 w-24 md:h-32 md:w-32 object-contain mx-auto rounded-2xl shadow-lg bg-white p-2">
+        </div>
+        @endif
+        
         <span class="inline-flex items-center gap-2 bg-white/90 backdrop-blur border border-slate-200 text-sky-600 px-5 py-2 rounded-full font-bold text-sm mb-6 shadow-lg">
             <span class="text-lg">🌈</span> Pendidikan Anak Usia Dini Terbaik
         </span>
         <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800 mb-6 leading-tight">
             {{ $settings->welcome_text ?? 'Selamat Datang di' }} <br>
-            <span class="bg-gradient-to-r from-sky-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">PAUD Damhil UNG</span>
+            <span class="bg-gradient-to-r from-sky-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">{{ $settings->school_name ?? 'PAUD Damhil UNG' }}</span>
         </h1>
-        <p class="text-lg text-slate-600 mb-8 max-w-xl">
+        <p class="text-lg text-slate-600 mb-8 max-w-xl mx-auto">
             {{ $settings->sub_text ?? 'Membentuk generasi emas yang cerdas, ceria, dan berakhlak mulia melalui pendidikan yang menyenangkan!' }}
         </p>
         
-        <div class="flex flex-wrap gap-4">
+        <div class="flex flex-wrap gap-4 justify-center">
             <a href="{{ route('spmb.index') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
                 <span>🎒</span> Daftar Sekarang <i class="ph ph-arrow-right"></i>
             </a>
@@ -137,6 +151,55 @@
         </div>
     </div>
 </section>
+
+<!-- 🎯 Visi & Misi Section -->
+@if($settings->vision || $settings->mission)
+<section class="py-20 relative overflow-hidden">
+    <!-- Decorations -->
+    <div class="absolute top-10 left-10 text-5xl opacity-20 animate-bounce" style="animation-duration:4s">🎯</div>
+    <div class="absolute bottom-20 right-10 text-6xl opacity-20 animate-bounce" style="animation-duration:3s">⭐</div>
+    
+    <div class="container">
+        <div class="text-center mb-12">
+            <span class="inline-block px-4 py-2 bg-sky-100 text-sky-600 rounded-full text-sm font-bold mb-4">🎯 Visi & Misi</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-800">Tujuan Kami</h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <!-- Visi -->
+            @if($settings->vision)
+            <div class="bg-gradient-to-br from-sky-50 to-blue-50 rounded-3xl p-8 border-2 border-sky-100 shadow-lg">
+                <div class="w-16 h-16 bg-gradient-to-br from-sky-400 to-blue-500 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-lg">
+                    👁️
+                </div>
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">Visi</h3>
+                <p class="text-slate-600 leading-relaxed text-lg">{{ $settings->vision }}</p>
+            </div>
+            @endif
+            
+            <!-- Misi -->
+            @if($settings->mission)
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-8 border-2 border-purple-100 shadow-lg">
+                <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-lg">
+                    🚀
+                </div>
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">Misi</h3>
+                <div class="text-slate-600 leading-relaxed">
+                    @foreach(explode("\n", $settings->mission) as $item)
+                        @if(trim($item))
+                        <div class="flex items-start gap-3 mb-3">
+                            <span class="text-purple-500 mt-1">✓</span>
+                            <span>{{ trim($item) }}</span>
+                        </div>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+            @endif
+        </div>
+    </div>
+</section>
+@endif
 
 <!-- 📸 Galeri Kegiatan Section -->
 @if($galleries->count() > 0)

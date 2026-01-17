@@ -172,6 +172,106 @@
             </div>
         </div>
 
+        <!-- Pengaturan SPMB -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200">
+                <div class="w-10 h-10 bg-orange-100 text-orange-600 rounded-lg flex items-center justify-center">
+                    <i class="ph ph-user-plus text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">Pengaturan SPMB</h3>
+                    <p class="text-sm text-slate-500">Kontrol pendaftaran murid baru</p>
+                </div>
+            </div>
+
+            <div class="space-y-5">
+                <!-- SPMB Status -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">
+                        Status Pendaftaran SPMB <span class="text-red-500">*</span>
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <label class="flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all {{ ($settings->spmb_status ?? 'closed') == 'open' ? 'border-green-500 bg-green-50' : 'border-slate-200 hover:border-slate-300' }}">
+                            <input type="radio" name="spmb_status" value="open" {{ ($settings->spmb_status ?? 'closed') == 'open' ? 'checked' : '' }} class="w-4 h-4 text-green-500">
+                            <div>
+                                <span class="font-bold text-slate-800">Dibuka</span>
+                                <p class="text-xs text-slate-500">Pendaftaran aktif</p>
+                            </div>
+                        </label>
+                        <label class="flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all {{ ($settings->spmb_status ?? 'closed') == 'waitlist_only' ? 'border-amber-500 bg-amber-50' : 'border-slate-200 hover:border-slate-300' }}">
+                            <input type="radio" name="spmb_status" value="waitlist_only" {{ ($settings->spmb_status ?? 'closed') == 'waitlist_only' ? 'checked' : '' }} class="w-4 h-4 text-amber-500">
+                            <div>
+                                <span class="font-bold text-slate-800">Daftar Tunggu</span>
+                                <p class="text-xs text-slate-500">Hanya waitlist</p>
+                            </div>
+                        </label>
+                        <label class="flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all {{ ($settings->spmb_status ?? 'closed') == 'closed' ? 'border-red-500 bg-red-50' : 'border-slate-200 hover:border-slate-300' }}">
+                            <input type="radio" name="spmb_status" value="closed" {{ ($settings->spmb_status ?? 'closed') == 'closed' ? 'checked' : '' }} class="w-4 h-4 text-red-500">
+                            <div>
+                                <span class="font-bold text-slate-800">Ditutup</span>
+                                <p class="text-xs text-slate-500">Pendaftaran tutup</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <!-- Kuota -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            Kuota Pendaftar
+                        </label>
+                        <input type="number" name="spmb_quota" value="{{ $settings->spmb_quota ?? 50 }}" min="1"
+                               class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
+                               placeholder="50">
+                    </div>
+                    <!-- Start Date -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Tanggal Mulai</label>
+                        <input type="date" name="spmb_start_date" value="{{ $settings->spmb_start_date ? $settings->spmb_start_date->format('Y-m-d') : '' }}"
+                               class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all">
+                    </div>
+                    <!-- End Date -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Tanggal Selesai</label>
+                        <input type="date" name="spmb_end_date" value="{{ $settings->spmb_end_date ? $settings->spmb_end_date->format('Y-m-d') : '' }}"
+                               class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all">
+                    </div>
+                </div>
+
+                <!-- Closed Message -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Pesan Saat SPMB Tutup</label>
+                    <textarea name="spmb_closed_message" rows="2"
+                              class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all resize-none"
+                              placeholder="Maaf, pendaftaran sedang ditutup. Silakan daftar ke waiting list...">{{ $settings->spmb_closed_message }}</textarea>
+                </div>
+
+                <!-- Current Stats -->
+                <div class="bg-slate-50 rounded-xl p-4">
+                    <h4 class="text-sm font-bold text-slate-700 mb-3">Status Saat Ini</h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                        <div>
+                            <p class="text-2xl font-bold text-sky-600">{{ \App\Models\Applicant::count() }}</p>
+                            <p class="text-xs text-slate-500">Pendaftar</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-green-600">{{ $settings->spmb_quota ?? 50 }}</p>
+                            <p class="text-xs text-slate-500">Kuota</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-amber-600">{{ $settings->getRemainingQuota() }}</p>
+                            <p class="text-xs text-slate-500">Sisa Kuota</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-purple-600">{{ \App\Models\Waitlist::waiting()->count() }}</p>
+                            <p class="text-xs text-slate-500">Daftar Tunggu</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Submit -->
         <div class="flex justify-end">
             <button type="submit" class="inline-flex items-center gap-2 px-8 py-3 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl transition-colors shadow-lg">

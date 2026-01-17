@@ -16,6 +16,38 @@
     </a>
 </div>
 
+<!-- Flash Message -->
+@if(session('success'))
+<div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-3">
+    <i class="ph ph-check-circle text-xl"></i>
+    <span>{{ session('success') }}</span>
+</div>
+@endif
+
+<!-- Search -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
+    <form action="{{ route('teachers.index') }}" method="GET" class="flex flex-col sm:flex-row gap-4">
+        <div class="flex-1">
+            <div class="relative">
+                <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" name="search" value="{{ request('search') }}" 
+                       placeholder="Cari nama atau jabatan..."
+                       class="w-full pl-11 pr-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all">
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <button type="submit" class="px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-medium rounded-xl transition-colors">
+                <i class="ph ph-magnifying-glass mr-1"></i> Cari
+            </button>
+            @if(request('search'))
+            <a href="{{ route('teachers.index') }}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium rounded-xl transition-colors">
+                Reset
+            </a>
+            @endif
+        </div>
+    </form>
+</div>
+
 <!-- Table Card -->
 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
     <div class="overflow-x-auto">
@@ -31,12 +63,16 @@
             <tbody class="divide-y divide-slate-100">
                 @forelse($teachers as $index => $teacher)
                 <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4 text-slate-600">{{ $index + 1 }}</td>
+                    <td class="px-6 py-4 text-slate-600">{{ $teachers->firstItem() + $index }}</td>
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
+                            @if($teacher->photo)
+                            <img src="{{ asset('storage/' . $teacher->photo) }}" alt="{{ $teacher->name }}" class="w-10 h-10 rounded-full object-cover">
+                            @else
                             <div class="w-10 h-10 bg-gradient-to-br from-sky-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold">
                                 {{ strtoupper(substr($teacher->name, 0, 1)) }}
                             </div>
+                            @endif
                             <span class="font-medium text-slate-800">{{ $teacher->name }}</span>
                         </div>
                     </td>
@@ -70,12 +106,23 @@
                 <tr>
                     <td colspan="4" class="px-6 py-12 text-center text-slate-400">
                         <i class="ph ph-chalkboard-teacher text-4xl mb-2 block"></i>
-                        Belum ada data guru. <a href="{{ route('teachers.create') }}" class="text-sky-600 hover:underline">Tambah sekarang</a>
+                        @if(request('search'))
+                            Tidak ada guru dengan kata kunci "{{ request('search') }}"
+                        @else
+                            Belum ada data guru. <a href="{{ route('teachers.create') }}" class="text-sky-600 hover:underline">Tambah sekarang</a>
+                        @endif
                     </td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
+    
+    <!-- Pagination -->
+    @if($teachers->hasPages())
+    <div class="px-6 py-4 border-t border-slate-100">
+        {{ $teachers->links() }}
+    </div>
+    @endif
 </div>
 @endsection

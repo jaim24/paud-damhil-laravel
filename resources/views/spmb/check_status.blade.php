@@ -76,8 +76,12 @@
                         <span class="font-bold text-slate-800">{{ $applicant->child_name }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-slate-500">Nama Orang Tua:</span>
-                        <span class="font-bold text-slate-800">{{ $applicant->parent_name }}</span>
+                        <span class="text-slate-500">Nama Ayah:</span>
+                        <span class="font-bold text-slate-800">{{ $applicant->father_name }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Nama Ibu:</span>
+                        <span class="font-bold text-slate-800">{{ $applicant->mother_name }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-slate-500">Tanggal Daftar:</span>

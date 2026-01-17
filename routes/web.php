@@ -8,8 +8,10 @@ use App\Http\Controllers\AdminController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// SPMB Routes (formerly PPDB)
+// SPMB Routes (with Token Verification)
 Route::get('/spmb', [PpdbController::class, 'index'])->name('spmb.index');
+Route::post('/spmb/verify', [PpdbController::class, 'verifyToken'])->name('spmb.verify');
+Route::get('/spmb/form', [PpdbController::class, 'showForm'])->name('spmb.form');
 Route::post('/spmb', [PpdbController::class, 'store'])->name('spmb.store');
 Route::get('/spmb/cek-status', [PpdbController::class, 'showCheckStatus'])->name('spmb.status');
 Route::post('/spmb/cek-status', [PpdbController::class, 'checkStatus'])->name('spmb.check_status');
@@ -45,6 +47,14 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{applicant}', [\App\Http\Controllers\ApplicantController::class, 'destroy'])->name('destroy');
     });
     
+    // Token Admin Routes
+    Route::prefix('admin/tokens')->name('tokens.admin.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\RegistrationTokenController::class, 'index'])->name('index');
+        Route::post('/generate/{id}', [\App\Http\Controllers\RegistrationTokenController::class, 'generateFromWaitlist'])->name('generate');
+        Route::post('/generate-manual', [\App\Http\Controllers\RegistrationTokenController::class, 'generateManual'])->name('generate_manual');
+        Route::delete('/{id}', [\App\Http\Controllers\RegistrationTokenController::class, 'destroy'])->name('destroy');
+    });
+    
     // SPP Admin Routes
     Route::prefix('admin/spp')->name('spp.admin.')->group(function () {
         Route::get('/', [\App\Http\Controllers\SppAdminController::class, 'index'])->name('index');
@@ -52,6 +62,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/', [\App\Http\Controllers\SppAdminController::class, 'store'])->name('store');
         Route::get('/bulk-create', [\App\Http\Controllers\SppAdminController::class, 'bulkCreate'])->name('bulk_create');
         Route::post('/bulk-store', [\App\Http\Controllers\SppAdminController::class, 'bulkStore'])->name('bulk_store');
+        Route::get('/student/{nisn}', [\App\Http\Controllers\SppAdminController::class, 'show'])->name('show');
+        Route::post('/student/{nisn}/mark-all-paid', [\App\Http\Controllers\SppAdminController::class, 'markAllPaid'])->name('mark_all_paid');
         Route::get('/{sppInvoice}/edit', [\App\Http\Controllers\SppAdminController::class, 'edit'])->name('edit');
         Route::put('/{sppInvoice}', [\App\Http\Controllers\SppAdminController::class, 'update'])->name('update');
         Route::delete('/{sppInvoice}', [\App\Http\Controllers\SppAdminController::class, 'destroy'])->name('destroy');
@@ -61,4 +73,20 @@ Route::middleware(['auth'])->group(function () {
     // Settings Routes
     Route::get('/admin/settings', [\App\Http\Controllers\SettingController::class, 'index'])->name('settings.index');
     Route::put('/admin/settings', [\App\Http\Controllers\SettingController::class, 'update'])->name('settings.update');
+    
+    // Profile Routes
+    Route::get('/admin/profile/password', [\App\Http\Controllers\ProfileController::class, 'showChangePassword'])->name('profile.password');
+    Route::put('/admin/profile/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    
+    // Waitlist Admin Routes
+    Route::prefix('admin/waitlist')->name('waitlist.admin.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\WaitlistController::class, 'adminIndex'])->name('index');
+        Route::post('/{id}/transfer', [\App\Http\Controllers\WaitlistController::class, 'transfer'])->name('transfer');
+        Route::post('/transfer-all', [\App\Http\Controllers\WaitlistController::class, 'transferAll'])->name('transfer_all');
+        Route::delete('/{id}', [\App\Http\Controllers\WaitlistController::class, 'cancel'])->name('cancel');
+    });
 });
+
+// Waitlist Public Routes
+Route::get('/spmb/daftar-tunggu', [\App\Http\Controllers\WaitlistController::class, 'index'])->name('waitlist.index');
+Route::post('/spmb/daftar-tunggu', [\App\Http\Controllers\WaitlistController::class, 'store'])->name('waitlist.store');

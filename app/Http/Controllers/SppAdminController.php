@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SppInvoice;
 use App\Models\Student;
+use App\Models\SchoolClass;
 
 class SppAdminController extends Controller
 {
     public function index(Request $request)
     {
-        $query = SppInvoice::latest();
+        // Get all invoices grouped by student
+        $query = SppInvoice::query();
         
         // Filter by status
         if ($request->filled('status')) {
@@ -22,15 +24,69 @@ class SppAdminController extends Controller
             $query->where('month', $request->month);
         }
         
-        $invoices = $query->get();
-        $students = Student::active()->get();
+        // Filter by class
+        $selectedClass = $request->get('class');
+        
+        // Get all active students
+        $studentsQuery = Student::active();
+        
+        if ($selectedClass) {
+            $studentsQuery->where('class_group', $selectedClass);
+        }
+        
+        $students = $studentsQuery->orderBy('class_group')->orderBy('name')->get();
+        
+        // Build student SPP summary
+        $studentSppData = [];
+        
+        foreach ($students as $student) {
+            $invoices = SppInvoice::where('nisn', $student->nisn ?? $student->id)->get();
+            
+            $totalAmount = $invoices->sum('amount');
+            $paidAmount = $invoices->where('status', 'Paid')->sum('amount');
+            $unpaidAmount = $invoices->where('status', 'Unpaid')->sum('amount');
+            $paidCount = $invoices->where('status', 'Paid')->count();
+            $unpaidCount = $invoices->where('status', 'Unpaid')->count();
+            
+            $studentSppData[] = [
+                'student' => $student,
+                'invoices' => $invoices,
+                'total_amount' => $totalAmount,
+                'paid_amount' => $paidAmount,
+                'unpaid_amount' => $unpaidAmount,
+                'paid_count' => $paidCount,
+                'unpaid_count' => $unpaidCount,
+                'total_invoices' => $invoices->count(),
+            ];
+        }
+        
+        // Group by class
+        $groupedByClass = collect($studentSppData)->groupBy(function ($item) {
+            return $item['student']->class_group ?? 'Tidak Ada Kelas';
+        });
+        
+        // Get available classes
+        $classes = Student::active()->distinct()->pluck('class_group')->filter()->sort();
         
         // Stats
         $totalUnpaid = SppInvoice::unpaid()->sum('amount');
         $totalPaid = SppInvoice::paid()->sum('amount');
         $countUnpaid = SppInvoice::unpaid()->count();
+        $totalStudents = $students->count();
         
-        return view('admin.spp.index', compact('invoices', 'students', 'totalUnpaid', 'totalPaid', 'countUnpaid'));
+        // Get available months for filter
+        $availableMonths = SppInvoice::distinct()->pluck('month');
+        
+        return view('admin.spp.index', compact(
+            'groupedByClass', 
+            'classes',
+            'selectedClass',
+            'totalUnpaid', 
+            'totalPaid', 
+            'countUnpaid',
+            'totalStudents',
+            'availableMonths'
+        ));
     }
 
     public function create()
@@ -52,8 +108,17 @@ class SppAdminController extends Controller
 
         $student = Student::findOrFail($request->student_id);
         
+        // Check if invoice already exists
+        $exists = SppInvoice::where('nisn', $student->nisn ?? $student->id)
+                            ->where('month', $data['month'])
+                            ->exists();
+        
+        if ($exists) {
+            return redirect()->back()->with('error', 'Tagihan untuk bulan ini sudah ada!')->withInput();
+        }
+        
         SppInvoice::create([
-            'nisn' => $student->nisn ?? $student->id, // Use ID if NISN is empty
+            'nisn' => $student->nisn ?? $student->id,
             'student_name' => $student->name,
             'month' => $data['month'],
             'amount' => $data['amount'],
@@ -63,6 +128,20 @@ class SppAdminController extends Controller
         ]);
 
         return redirect()->route('spp.admin.index')->with('success', 'Tagihan SPP berhasil ditambahkan!');
+    }
+
+    public function show($nisn)
+    {
+        // Show detail invoices for specific student
+        $student = Student::where('nisn', $nisn)->orWhere('id', $nisn)->firstOrFail();
+        $invoices = SppInvoice::where('nisn', $nisn)->orderBy('created_at', 'desc')->get();
+        $months = $this->getMonths();
+        
+        $totalAmount = $invoices->sum('amount');
+        $paidAmount = $invoices->where('status', 'Paid')->sum('amount');
+        $unpaidAmount = $invoices->where('status', 'Unpaid')->sum('amount');
+        
+        return view('admin.spp.show', compact('student', 'invoices', 'months', 'totalAmount', 'paidAmount', 'unpaidAmount'));
     }
 
     public function edit(SppInvoice $sppInvoice)
@@ -99,7 +178,19 @@ class SppAdminController extends Controller
             'status' => 'Paid',
             'paid_date' => now(),
         ]);
-        return redirect()->route('spp.admin.index')->with('success', 'Tagihan berhasil ditandai LUNAS!');
+        return redirect()->back()->with('success', 'Tagihan berhasil ditandai LUNAS!');
+    }
+    
+    public function markAllPaid($nisn)
+    {
+        SppInvoice::where('nisn', $nisn)
+                  ->where('status', 'Unpaid')
+                  ->update([
+                      'status' => 'Paid',
+                      'paid_date' => now(),
+                  ]);
+        
+        return redirect()->back()->with('success', 'Semua tagihan siswa ini berhasil dilunasi!');
     }
 
     public function bulkCreate()
