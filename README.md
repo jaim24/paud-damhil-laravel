@@ -1,126 +1,257 @@
-# PAUD Damhil UNG - Sistem Informasi & PPDB Laravel
+<p align="center">
+  <img src="public/images/logo.png" alt="PAUD Damhil Logo" width="120" height="120">
+</p>
 
-Aplikasi web manajemen sekolah dan Penerimaan Peserta Didik Baru (PPDB) untuk PAUD Damhil Universitas Negeri Gorontalo. Dibangun menggunakan **Laravel 10**, dilengkapi dengan fitur pembayaran SPP, manajemen siswa/guru, dan tampilan responsif modern.
+<h1 align="center">🎓 PAUD Damhil UNG</h1>
 
-## 📋 Prasyarat Sistem
+<p align="center">
+  <strong>Sistem Informasi Sekolah & SPMB (Seleksi Penerimaan Murid Baru)</strong>
+</p>
 
-Sebelum menginstal, pastikan komputer Anda sudah terinstall:
+<p align="center">
+  <a href="#-fitur-unggulan">Fitur</a> •
+  <a href="#-teknologi">Teknologi</a> •
+  <a href="#-instalasi">Instalasi</a> •
+  <a href="#-screenshot">Screenshot</a> •
+  <a href="#-kontribusi">Kontribusi</a>
+</p>
 
-1.  **PHP** >= 8.1
-2.  **Composer** (Manajer paket PHP)
-3.  **Database** (MySQL atau MariaDB, bisa via XAMPP/Laragon)
-4.  **Node.js & NPM** (Untuk mengompolasi aset CSS/JS)
+<p align="center">
+  <img src="https://img.shields.io/badge/Laravel-12-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel">
+  <img src="https://img.shields.io/badge/PHP-8.3-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP">
+  <img src="https://img.shields.io/badge/TailwindCSS-3.x-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="TailwindCSS">
+  <img src="https://img.shields.io/badge/MySQL-Database-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Active%20Development-brightgreen?style=flat-square" alt="Status">
+  <img src="https://img.shields.io/badge/License-Educational-blue?style=flat-square" alt="License">
+</p>
 
 ---
 
-## 🚀 Panduan Instalasi (Langkah demi Langkah)
+## 🌟 Tentang Proyek
 
-Ikuti langkah-langkah berikut untuk menjalankan aplikasi ini di komputer lokal Anda:
+**PAUD Damhil UNG** adalah sistem informasi sekolah modern yang dibangun khusus untuk PAUD Damhil Universitas Negeri Gorontalo. Aplikasi ini menyediakan solusi lengkap untuk manajemen sekolah PAUD, mulai dari pendaftaran siswa baru hingga pengelolaan pembayaran SPP.
 
-### 1. Clone Repository (Unduh Kode)
+### ✨ Mengapa Memilih Sistem Ini?
 
-Jika menggunakan Git:
+- 🎨 **UI/UX Modern** - Desain glassmorphism yang cantik dan responsif
+- 📱 **Mobile Friendly** - Tampilan optimal di semua perangkat
+- 🔐 **Aman** - Sistem token untuk pendaftaran, mencegah spam
+- 📊 **Dashboard Lengkap** - Statistik dan laporan real-time
+- 🚀 **Performa Tinggi** - Dibangun dengan Laravel terbaru
+
+---
+
+## 🎯 Fitur Unggulan
+
+<table>
+<tr>
+<td width="50%">
+
+### 📝 SPMB Online
+- Pendaftaran dengan sistem token akses
+- Formulir biodata lengkap & terstruktur
+- Daftar tunggu otomatis saat kuota penuh
+- Cek status pendaftaran real-time
+
+</td>
+<td width="50%">
+
+### 👨‍🎓 Manajemen Siswa
+- Data siswa per kelas dengan statistik
+- Filter & pencarian cerdas
+- Tracking status (Aktif/Lulus/Nonaktif)
+- Info orang tua terintegrasi
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 💰 Kelola SPP
+- Tagihan per siswa terorganisir per kelas
+- Buat tagihan massal dengan 1 klik
+- Status pembayaran real-time
+- Riwayat pembayaran lengkap
+
+</td>
+<td width="50%">
+
+### 👩‍🏫 Data Guru & Kelas
+- Profil guru lengkap
+- Manajemen kelas dinamis
+- Alokasi wali kelas
+- Tahun ajaran fleksibel
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🖼️ Galeri Foto
+- Upload foto kegiatan sekolah
+- Organisasi per album
+- Tampilan grid responsif
+- Lightbox preview
+
+</td>
+<td width="50%">
+
+### 📊 Dashboard Admin
+- Statistik pendaftaran
+- Grafik pembayaran SPP
+- Notifikasi pendaftar baru
+- Quick actions
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🛠️ Teknologi
+
+| Kategori | Teknologi |
+|----------|-----------|
+| **Backend** | Laravel 12, PHP 8.3 |
+| **Frontend** | Blade Templates, TailwindCSS, Alpine.js |
+| **Database** | MySQL / MariaDB |
+| **Icons** | Phosphor Icons |
+| **Charts** | Chart.js |
+| **Auth** | Laravel Built-in Auth |
+
+---
+
+## 📸 Screenshot
+
+<p align="center">
+  <img src="docs/screenshots/homepage.png" alt="Homepage" width="45%">
+  <img src="docs/screenshots/dashboard.png" alt="Dashboard" width="45%">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/spmb-form.png" alt="Form SPMB" width="45%">
+  <img src="docs/screenshots/students.png" alt="Data Siswa" width="45%">
+</p>
+
+> 💡 *Screenshot akan ditambahkan setelah deployment*
+
+---
+
+## 🚀 Instalasi
+
+### Prasyarat
+
+Pastikan sudah terinstall:
+- PHP >= 8.2
+- Composer
+- MySQL/MariaDB
+- Node.js & NPM
+
+### Langkah Instalasi
+
 ```bash
+# 1. Clone repository
 git clone https://github.com/username/paud-laravel.git
 cd paud-laravel
-```
-*Atau ekstrak file ZIP jika Anda mengunduhnya secara manual.*
 
-### 2. Install Dependensi
-
-Install library PHP dan JavaScript yang dibutuhkan:
-
-```bash
-# Install library backend (Laravel)
+# 2. Install dependencies
 composer install
-
-# Install library frontend (Vite/Tailwind jika ada)
 npm install
-```
 
-### 3. Konfigurasi Lingkungan (`.env`)
-
-Duplikat file contoh konfigurasi dan ubah namanya menjadi `.env`:
-
-```bash
-copy .env.example .env
-```
-
-Buka file `.env` dengan teks editor (Notepad/VS Code) dan atur koneksi database:
-
-```ini
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=paud_laravel  <-- Sesuaikan nama DB Anda
-DB_USERNAME=root          <-- Default XAMPP/Laragon biasanya 'root'
-DB_PASSWORD=              <-- Kosongkan jika tidak ada password
-```
-
-### 4. Buat Database
-
-Buka phpMyAdmin atau HeidiSQL, lalu buat database baru dengan nama yang sesuai dengan di atas (contoh: `paud_laravel`).
-
-### 5. Generate Key & Migrasi Database
-
-Jalankan perintah ini di terminal proyek:
-
-```bash
-# Generate kunci enkripsi aplikasi
+# 3. Setup environment
+cp .env.example .env
 php artisan key:generate
 
-# Buat tabel-tabel di database otomatis
+# 4. Konfigurasi database di .env
+# DB_DATABASE=paud_laravel
+# DB_USERNAME=root
+# DB_PASSWORD=
+
+# 5. Migrasi database
 php artisan migrate
-```
 
-### 6. Jalankan Aplikasi
+# 6. (Opsional) Seed data dummy
+php artisan db:seed
 
-Setelah semua berhasil, jalankan server pengembangan:
+# 7. Build assets
+npm run build
 
-```bash
+# 8. Jalankan server
 php artisan serve
 ```
 
-Buka browser dan akses: `http://localhost:8000`
+🌐 Akses: `http://localhost:8000`
 
 ---
 
-## 👤 Membuat Akun Admin
+## 👤 Akun Default
 
-Karena aplikasi ini masih kosong setelah instalasi, Anda perlu membuat akun Admin secara manual lewat terminal (Tinker):
+Setelah instalasi dengan seeder:
 
-1.  Buka terminal proyek, ketik:
-    ```bash
-    php artisan tinker
-    ```
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@pauddamhil.sch.id | admin123 |
 
-2.  Copy & Paste perintah berikut (satu per satu):
-    ```php
-    $admin = new App\Models\User();
-    $admin->name = 'Administrator';
-    $admin->email = 'admin@paud.com';
-    $admin->password = bcrypt('password123'); // Password bisa diganti
-    $admin->save();
-    ```
-
-3.  Ketik `exit` untuk keluar.
-4.  Login di web dengan email `admin@paud.com` dan password `password123`.
+> ⚠️ **Penting:** Ganti password default setelah login pertama!
 
 ---
 
-## 🛠 Teknologi yang Digunakan
+## 📁 Struktur Proyek
 
--   **Backend**: Laravel 10
--   **Frontend**: Blade Templates, Custom CSS (Glassmorphism UI)
--   **Database**: MySQL
--   **Fitur**:
-    -   PPDB Online
-    -   Cek Tagihan SPP
-    -   Admin Dashboard (Guru, Siswa, Kelas)
-    -   Responsive Layout (Mobile & Desktop)
+```
+paud-laravel/
+├── app/
+│   ├── Http/Controllers/   # Logic aplikasi
+│   ├── Models/             # Model Eloquent
+│   └── ...
+├── database/
+│   ├── migrations/         # Struktur database
+│   └── seeders/           # Data dummy
+├── resources/
+│   ├── views/             # Template Blade
+│   └── css/               # Styling
+├── routes/
+│   └── web.php            # Definisi routes
+└── public/                # Assets publik
+```
+
+---
+
+## 🤝 Kontribusi
+
+Kontribusi sangat diterima! Silakan:
+
+1. Fork repository ini
+2. Buat branch fitur (`git checkout -b feature/AmazingFeature`)
+3. Commit perubahan (`git commit -m 'Add some AmazingFeature'`)
+4. Push ke branch (`git push origin feature/AmazingFeature`)
+5. Buat Pull Request
+
+---
+
+## 📞 Kontak
+
+**PAUD Damhil - Universitas Negeri Gorontalo**
+
+- 🌐 Website: [Coming Soon]
+- 📧 Email: info@pauddamhil.sch.id
+- 📍 Lokasi: Kampus UNG, Gorontalo
 
 ---
 
 ## 📄 Lisensi
 
-Proyek ini dibuat khusus untuk PAUD Damhil UNG.
+Proyek ini dikembangkan untuk keperluan pendidikan PAUD Damhil UNG.
+
+---
+
+<p align="center">
+  Made with ❤️ for PAUD Damhil UNG
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Built%20with-Laravel-FF2D20?style=for-the-badge&logo=laravel" alt="Built with Laravel">
+</p>
