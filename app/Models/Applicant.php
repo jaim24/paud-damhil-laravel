@@ -9,6 +9,14 @@ class Applicant extends Model
 {
     use HasFactory;
 
+    // Status constants - alur baru SPMB
+    const STATUS_ADMINISTRASI = 'administrasi';     // Isi form lengkap
+    const STATUS_DECLARATION = 'declaration';        // Menunggu upload surat pernyataan
+    const STATUS_PAYMENT = 'payment';               // Menunggu pembayaran
+    const STATUS_PAID = 'paid';                     // Sudah bayar
+    const STATUS_ACCEPTED = 'accepted';             // Diterima sebagai siswa
+    const STATUS_REJECTED = 'rejected';             // Ditolak
+
     protected $fillable = [
         // Data Murid
         'child_name',
@@ -58,14 +66,28 @@ class Applicant extends Model
         // Status
         'status',
         'notes',
+        // Surat Pernyataan
+        'declaration_file',
+        'declaration_uploaded_at',
+        // Pembayaran
+        'registration_fee',
+        'payment_status',
+        'payment_date',
+        'payment_proof',
+        // Tahun Ajaran & Referensi
+        'academic_year',
+        'waitlist_id',
     ];
 
     protected $casts = [
         'birth_date' => 'date',
+        'declaration_uploaded_at' => 'datetime',
+        'payment_date' => 'datetime',
         'siblings_kandung' => 'integer',
         'siblings_tiri' => 'integer',
         'siblings_angkat' => 'integer',
         'child_order' => 'integer',
+        'registration_fee' => 'decimal:2',
     ];
 
     // Accessors
@@ -94,29 +116,122 @@ class Applicant extends Model
         };
     }
 
-    public function getStatusBadgeAttribute()
+    public function getStatusLabelAttribute()
     {
         return match($this->status) {
-            'Pending' => '<span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">Menunggu</span>',
-            'Accepted' => '<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Diterima</span>',
-            'Rejected' => '<span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">Ditolak</span>',
-            default => '-',
+            self::STATUS_ADMINISTRASI => 'Mengisi Formulir',
+            self::STATUS_DECLARATION => 'Upload Surat Pernyataan',
+            self::STATUS_PAYMENT => 'Menunggu Pembayaran',
+            self::STATUS_PAID => 'Sudah Bayar',
+            self::STATUS_ACCEPTED => 'Diterima',
+            self::STATUS_REJECTED => 'Ditolak',
+            // Legacy support
+            'Pending' => 'Menunggu',
+            'Accepted' => 'Diterima',
+            'Rejected' => 'Ditolak',
+            default => $this->status,
         };
     }
 
-    // Query Scopes
-    public function scopePending($query)
+    public function getStatusColorAttribute()
     {
-        return $query->where('status', 'Pending');
+        return match($this->status) {
+            self::STATUS_ADMINISTRASI => 'amber',
+            self::STATUS_DECLARATION => 'blue',
+            self::STATUS_PAYMENT => 'purple',
+            self::STATUS_PAID => 'green',
+            self::STATUS_ACCEPTED => 'emerald',
+            self::STATUS_REJECTED => 'red',
+            'Pending' => 'amber',
+            'Accepted' => 'green',
+            'Rejected' => 'red',
+            default => 'slate',
+        };
+    }
+
+    public function getStatusBadgeAttribute()
+    {
+        $color = $this->status_color;
+        $label = $this->status_label;
+        return "<span class=\"px-2 py-1 bg-{$color}-100 text-{$color}-700 rounded-full text-xs font-medium\">{$label}</span>";
+    }
+
+    // Query Scopes
+    public function scopeAdministrasi($query)
+    {
+        return $query->where('status', self::STATUS_ADMINISTRASI);
+    }
+
+    public function scopeDeclaration($query)
+    {
+        return $query->where('status', self::STATUS_DECLARATION);
+    }
+
+    public function scopePayment($query)
+    {
+        return $query->where('status', self::STATUS_PAYMENT);
+    }
+
+    public function scopePaid($query)
+    {
+        return $query->where('status', self::STATUS_PAID);
     }
 
     public function scopeAccepted($query)
     {
-        return $query->where('status', 'Accepted');
+        return $query->where('status', self::STATUS_ACCEPTED);
     }
 
     public function scopeRejected($query)
     {
-        return $query->where('status', 'Rejected');
+        return $query->where('status', self::STATUS_REJECTED);
+    }
+
+    // Legacy scopes for backward compatibility
+    public function scopePending($query)
+    {
+        return $query->whereIn('status', ['Pending', self::STATUS_ADMINISTRASI, self::STATUS_DECLARATION, self::STATUS_PAYMENT]);
+    }
+
+    // Relationships
+    public function waitlist()
+    {
+        return $this->belongsTo(Waitlist::class);
+    }
+
+    // Actions
+    public function uploadDeclaration($filePath)
+    {
+        $this->update([
+            'declaration_file' => $filePath,
+            'declaration_uploaded_at' => now(),
+            'status' => self::STATUS_PAYMENT,
+        ]);
+    }
+
+    public function markAsPaid($proof = null, $amount = null)
+    {
+        $this->update([
+            'payment_status' => 'paid',
+            'payment_date' => now(),
+            'payment_proof' => $proof,
+            'registration_fee' => $amount ?? $this->registration_fee,
+            'status' => self::STATUS_PAID,
+        ]);
+    }
+
+    public function acceptAsStudent()
+    {
+        $this->update([
+            'status' => self::STATUS_ACCEPTED,
+        ]);
+    }
+
+    public function reject($reason = null)
+    {
+        $this->update([
+            'status' => self::STATUS_REJECTED,
+            'notes' => $reason ?? $this->notes,
+        ]);
     }
 }

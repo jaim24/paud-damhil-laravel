@@ -5,124 +5,92 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Applicant;
 use App\Models\Setting;
-use App\Models\RegistrationToken;
+use Illuminate\Support\Facades\Session;
 
 class PpdbController extends Controller
 {
-    // Show token verification form
+    // Redirect index to check status page because registration must go through Waitlist
     public function index()
     {
-        $settings = Setting::getSettings();
-        
-        // Check if SPMB is closed - redirect to waitlist
-        if ($settings->spmb_status === 'closed') {
-            return redirect()->route('waitlist.index');
-        }
-        
-        // Check if waitlist only
-        if ($settings->spmb_status === 'waitlist_only') {
-            return redirect()->route('waitlist.index');
-        }
-
-        // Show token verification form
-        return view('spmb.verify_token', compact('settings'));
+        return redirect()->route('spmb.status');
     }
 
-    // Verify token
-    public function verifyToken(Request $request)
+    // Show check status page
+    public function showCheckStatus()
+    {
+        return view('spmb.check_status');
+    }
+
+    // Process check status & login for administration
+    public function checkStatus(Request $request)
     {
         $request->validate([
-            'token' => 'required|string|size:8',
-        ], [
-            'token.required' => 'Kode akses wajib diisi',
-            'token.size' => 'Kode akses harus 8 karakter',
+            'phone' => 'required'
         ]);
 
-        $result = RegistrationToken::validateToken($request->token);
+        $setting = Setting::first();
+        $applicant = Applicant::where('phone', $request->phone)->first();
 
-        if (!$result['valid']) {
-            return back()->withInput()->with('error', $result['message']);
-        }
-
-        $token = $result['token'];
-        
-        // Load waitlist data if exists
-        $waitlistData = null;
-        if ($token->waitlist_id) {
-            $waitlist = $token->waitlist;
-            if ($waitlist) {
-                $waitlistData = [
-                    'child_name' => $waitlist->child_name,
-                    'birth_place' => $waitlist->birth_place,
-                    'birth_date' => $waitlist->birth_date ? $waitlist->birth_date->format('Y-m-d') : null,
-                    'gender' => $waitlist->gender,
-                    'father_name' => $waitlist->father_name,
-                    'father_job' => $waitlist->father_job,
-                    'mother_name' => $waitlist->mother_name,
-                    'mother_job' => $waitlist->mother_job,
-                    'address' => $waitlist->address,
-                    'phone' => $waitlist->phone,
-                ];
+        if ($applicant) {
+            // If status is 'administrasi', allow them to edit/complete data
+            if ($applicant->status === 'administrasi') {
+                Session::put('applicant_auth', $applicant->id);
             }
+            // If status is 'declaration', allow access to upload page (logic can be added here or in middleware)
+            if ($applicant->status === 'declaration') {
+                Session::put('applicant_auth', $applicant->id);
+            }
+
+            return view('spmb.check_status', compact('applicant', 'setting'));
+        } else {
+            return redirect()->route('spmb.status')->with('not_found', true);
         }
-
-        // Store token in session with waitlist data
-        session(['spmb_token' => $token->token]);
-        session(['spmb_token_data' => [
-            'id' => $token->id,
-            'child_name' => $token->child_name,
-            'phone' => $token->phone,
-            'waitlist' => $waitlistData,
-        ]]);
-
-        return redirect()->route('spmb.form');
     }
 
-    // Show registration form (only if token verified)
+    // Show administration form (update data)
     public function showForm()
     {
-        if (!session('spmb_token')) {
-            return redirect()->route('spmb.index')->with('error', 'Silakan masukkan kode akses terlebih dahulu.');
+        $applicantId = Session::get('applicant_auth');
+        
+        if (!$applicantId) {
+            return redirect()->route('spmb.status')->with('error', 'Silakan cek status terlebih dahulu untuk mengakses formulir.');
+        }
+
+        $applicant = Applicant::find($applicantId);
+        
+        if (!$applicant || $applicant->status !== 'administrasi') {
+            return redirect()->route('spmb.status')->with('error', 'Akses formulir ditutup atau status tidak valid.');
         }
 
         $settings = Setting::getSettings();
-        $tokenData = session('spmb_token_data');
-        
-        // Get waitlist prefill data
-        $prefillData = $tokenData['waitlist'] ?? null;
 
-        // Check quota
-        if (!$settings->isSpmbOpen()) {
-            session()->forget(['spmb_token', 'spmb_token_data']);
-            return redirect()->route('waitlist.index')
-                ->with('info', 'Kuota pendaftaran sudah penuh.');
+        // Use existing applicant data as prefill
+        $prefillData = $applicant->toArray();
+
+        // Ensure birth_date is object or string format Y-m-d
+        if ($applicant->birth_date instanceof \Carbon\Carbon) {
+             $prefillData['birth_date'] = $applicant->birth_date->format('Y-m-d');
         }
 
         return view('ppdb.index', [
             'settings' => $settings,
-            'remainingQuota' => $settings->getRemainingQuota(),
-            'tokenData' => $tokenData,
-            'prefillData' => $prefillData, // Data dari waitlist untuk mengisi form
+            'applicant' => $applicant,
+            'prefillData' => $prefillData,
         ]);
     }
 
-    // Store applicant
-    public function store(Request $request)
+    // Update applicant data
+    public function update(Request $request)
     {
-        // Verify token in session
-        if (!session('spmb_token')) {
-            return redirect()->route('spmb.index')->with('error', 'Sesi kadaluarsa. Silakan masukkan kode akses kembali.');
-        }
-
-        $settings = Setting::getSettings();
+        $applicantId = Session::get('applicant_auth');
         
-        // Double check if SPMB is open
-        if (!$settings->isSpmbOpen()) {
-            session()->forget(['spmb_token', 'spmb_token_data']);
-            return redirect()->route('waitlist.index')
-                ->with('error', 'Maaf, pendaftaran SPMB sedang tutup.');
+        if (!$applicantId) {
+            return redirect()->route('spmb.status')->with('error', 'Sesi berakhir. Silakan cek status kembali.');
         }
 
+        $applicant = Applicant::findOrFail($applicantId);
+
+        // Validation - same as before but without unique checks against self
         $data = $request->validate([
             // Data Murid - Required
             'child_name' => 'required|string|max:255',
@@ -171,7 +139,7 @@ class PpdbController extends Controller
             'father_income' => 'nullable|string|max:100',
             'mother_income' => 'nullable|string|max:100',
             
-            // Wali
+            // Wali (Optional)
             'guardian_name' => 'nullable|string|max:255',
             'guardian_relationship' => 'nullable|string|max:100',
             'guardian_education' => 'nullable|string|max:100',
@@ -180,15 +148,6 @@ class PpdbController extends Controller
             // Kontak
             'phone' => 'required|string|max:20',
             'email' => 'nullable|email|max:255',
-        ], [
-            'child_name.required' => 'Nama lengkap anak wajib diisi',
-            'birth_place.required' => 'Tempat lahir wajib diisi',
-            'birth_date.required' => 'Tanggal lahir wajib diisi',
-            'religion.required' => 'Agama wajib diisi',
-            'address_street.required' => 'Alamat wajib diisi',
-            'father_name.required' => 'Nama ayah wajib diisi',
-            'mother_name.required' => 'Nama ibu wajib diisi',
-            'phone.required' => 'Nomor HP wajib diisi',
         ]);
 
         // Set defaults
@@ -197,63 +156,77 @@ class PpdbController extends Controller
         $data['siblings_angkat'] = $data['siblings_angkat'] ?? 0;
         $data['child_order'] = $data['child_order'] ?? 1;
 
-        // Get token data from session
-        $tokenData = session('spmb_token_data');
-        $token = RegistrationToken::find($tokenData['id']);
+        // Update applicant data
+        $applicant->update($data);
         
-        // Check for duplicate - prevent double submission
-        $existingApplicant = Applicant::where('phone', $data['phone'])
-            ->where('child_name', $data['child_name'])
-            ->first();
-            
-        if ($existingApplicant) {
-            session()->forget(['spmb_token', 'spmb_token_data']);
-            return redirect()->route('spmb.index')
-                ->with('error', 'Data pendaftaran dengan nama dan nomor HP ini sudah ada. Silakan cek status pendaftaran Anda.');
+        // Update status to 'declaration' so they can proceed to next step
+        $applicant->update(['status' => 'declaration']);
+
+        return redirect()->route('spmb.success');
+    }
+    // Show declaration upload form
+    public function showUploadDeclaration()
+    {
+        $applicantId = Session::get('applicant_auth');
+        
+        if (!$applicantId) {
+            return redirect()->route('spmb.status')->with('error', 'Sesi berakhir. Silakan cek status untuk login.');
         }
 
-        // Create applicant
-        Applicant::create($data);
+        $applicant = Applicant::findOrFail($applicantId);
 
-        // Mark token as used
-        if ($token) {
-            $token->markAsUsed();
-            
-            // If token came from waitlist, mark waitlist as transferred
-            if ($token->waitlist_id) {
-                $waitlist = $token->waitlist;
-                if ($waitlist && $waitlist->status === 'waiting') {
-                    $waitlist->update([
-                        'status' => 'transferred',
-                        'transferred_at' => now(),
-                    ]);
-                }
-            }
+        if ($applicant->status !== 'declaration') {
+             return redirect()->route('spmb.status')->with('info', 'Status pendaftaran Anda saat ini bukan tahap upload surat pernyataan.');
         }
 
-        // Clear session
-        session()->forget(['spmb_token', 'spmb_token_data']);
-
-        return redirect()->route('spmb.index')->with('success', 'Pendaftaran Berhasil! Silakan cek status pendaftaran Anda secara berkala menggunakan nomor HP yang terdaftar.');
+        return view('spmb.upload_declaration', compact('applicant'));
     }
 
-    public function showCheckStatus()
+    // Store uploaded declaration
+    public function storeDeclaration(Request $request)
     {
-        return view('spmb.check_status');
-    }
+        $applicantId = Session::get('applicant_auth');
+        
+        if (!$applicantId) {
+             return redirect()->route('spmb.status');
+        }
 
-    public function checkStatus(Request $request)
-    {
+        $applicant = Applicant::findOrFail($applicantId);
+
         $request->validate([
-            'phone' => 'required'
+            'declaration_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048', // 2MB max
+        ], [
+            'declaration_file.max' => 'Ukuran file maksimal 2MB',
+            'declaration_file.mimes' => 'Format file harus PDF atau Gambar (JPG, PNG)',
         ]);
 
-        $applicant = Applicant::where('phone', $request->phone)->first();
-
-        if ($applicant) {
-            return view('spmb.check_status', compact('applicant'));
-        } else {
-            return redirect()->route('spmb.status')->with('not_found', true);
+        if ($request->hasFile('declaration_file')) {
+            $path = $request->file('declaration_file')->store('declarations', 'public');
+            
+            $applicant->update([
+                'declaration_file' => $path,
+                'status' => 'payment' // Move to next step: Payment
+            ]);
+            
+            return redirect()->route('spmb.status')->with('success', 'Surat pernyataan berhasil diunggah! Pendaftaran Anda masuk ke tahap verifikasi/pembayaran.');
         }
+
+        return back()->with('error', 'Gagal mengunggah file.');
+    }
+
+    // Print declaration template
+    public function printDeclaration()
+    {
+        $applicantId = Session::get('applicant_auth');
+        
+        if (!$applicantId) {
+             return redirect()->route('spmb.status');
+        }
+
+        $applicant = Applicant::findOrFail($applicantId);
+        $setting = Setting::first();
+
+        return view('spmb.print_declaration', compact('applicant', 'setting'));
     }
 }
+

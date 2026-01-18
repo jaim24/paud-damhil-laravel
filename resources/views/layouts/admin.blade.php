@@ -89,11 +89,11 @@
                     <span class="font-semibold text-sm">Daftar Tunggu</span>
                 </a>
 
-                <a href="{{ route('tokens.admin.index') }}" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-white transition-all border-l-4 border-transparent {{ request()->routeIs('tokens.admin.*') ? 'active' : '' }}">
+                <a href="{{ route('requirements.index') }}" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-white transition-all border-l-4 border-transparent {{ request()->routeIs('requirements.*') ? 'active' : '' }}">
                     <div class="link-icon w-9 h-9 bg-slate-800/50 group-hover:bg-purple-500/20 rounded-lg flex items-center justify-center transition-all">
-                        <i class="ph-fill ph-key text-lg"></i>
+                        <i class="ph-fill ph-list-checks text-lg"></i>
                     </div>
-                    <span class="font-semibold text-sm">Token Akses</span>
+                    <span class="font-semibold text-sm">Persyaratan</span>
                 </a>
 
                 <!-- Data Master -->
@@ -225,13 +225,112 @@
     <!-- Mobile Sidebar Overlay -->
     <div id="overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden lg:hidden"></div>
 
+    <!-- Custom Delete Confirmation Modal -->
+    <div id="deleteModal" class="fixed inset-0 z-50 hidden">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
+        
+        <!-- Modal Content -->
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4">
+            <div id="deleteModalContent" class="bg-white rounded-2xl shadow-2xl overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
+                <!-- Header with Icon -->
+                <div class="bg-gradient-to-r from-red-500 to-rose-500 px-6 py-5 text-center">
+                    <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="ph ph-trash text-3xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white">Konfirmasi Hapus</h3>
+                </div>
+                
+                <!-- Body -->
+                <div class="p-6 text-center">
+                    <p class="text-slate-600 mb-2">Apakah Anda yakin ingin menghapus</p>
+                    <p class="text-lg font-bold text-slate-800 mb-4" id="deleteItemName">data ini</p>
+                    <p class="text-sm text-slate-400">
+                        <i class="ph ph-warning-circle text-amber-500"></i>
+                        Tindakan ini tidak dapat dibatalkan
+                    </p>
+                </div>
+                
+                <!-- Actions -->
+                <div class="flex gap-3 px-6 pb-6">
+                    <button type="button" onclick="closeDeleteModal()" 
+                            class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl transition-all">
+                        Batal
+                    </button>
+                    <button type="button" onclick="confirmDelete()" 
+                            class="flex-1 px-4 py-3 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2">
+                        <i class="ph ph-trash"></i>
+                        Ya, Hapus!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Sidebar Toggle
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
             sidebar.classList.toggle('-translate-x-full');
             overlay.classList.toggle('hidden');
         }
+
+        // Delete Modal Functions
+        let deleteFormElement = null;
+
+        function showDeleteModal(formOrButton, itemName = 'data ini') {
+            // Get the form element
+            if (formOrButton.tagName === 'FORM') {
+                deleteFormElement = formOrButton;
+            } else {
+                deleteFormElement = formOrButton.closest('form');
+            }
+            
+            // Update item name
+            document.getElementById('deleteItemName').textContent = itemName;
+            
+            // Show modal
+            const modal = document.getElementById('deleteModal');
+            const content = document.getElementById('deleteModalContent');
+            
+            modal.classList.remove('hidden');
+            
+            // Animate in
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeDeleteModal() {
+            const modal = document.getElementById('deleteModal');
+            const content = document.getElementById('deleteModalContent');
+            
+            // Animate out
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                deleteFormElement = null;
+            }, 200);
+        }
+
+        function confirmDelete() {
+            if (deleteFormElement) {
+                deleteFormElement.submit();
+            }
+            closeDeleteModal();
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeDeleteModal();
+            }
+        });
     </script>
 </body>
 </html>
+

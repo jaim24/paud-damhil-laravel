@@ -13,12 +13,6 @@ class WaitlistController extends Controller
     public function index()
     {
         $settings = Setting::getSettings();
-        
-        // If SPMB is open, redirect to SPMB
-        if ($settings->isSpmbOpen()) {
-            return redirect()->route('spmb.index')->with('info', 'Pendaftaran SPMB sedang dibuka! Silakan daftar langsung.');
-        }
-
         return view('waitlist.index', compact('settings'));
     }
 
@@ -48,9 +42,17 @@ class WaitlistController extends Controller
             'phone.required' => 'Nomor HP wajib diisi',
         ]);
 
+        $validated['status'] = Waitlist::STATUS_WAITING;
         Waitlist::create($validated);
 
-        return redirect()->route('waitlist.index')->with('success', 'Pendaftaran daftar tunggu berhasil! Kami akan menghubungi Anda saat pendaftaran SPMB dibuka.');
+        return redirect()->route('waitlist.success');
+    }
+
+    // Public: Success page after registering
+    public function success()
+    {
+        $settings = Setting::getSettings();
+        return view('waitlist.success', compact('settings'));
     }
 
     // Admin: List all waitlist entries
@@ -78,11 +80,16 @@ class WaitlistController extends Controller
         
         $stats = [
             'waiting' => Waitlist::waiting()->count(),
+            'scheduled' => Waitlist::scheduled()->count(),
+            'passed' => Waitlist::passed()->count(),
+            'failed' => Waitlist::failed()->count(),
             'transferred' => Waitlist::transferred()->count(),
             'total' => Waitlist::count(),
         ];
 
-        return view('admin.waitlist.index', compact('waitlists', 'stats'));
+        $settings = Setting::getSettings();
+
+        return view('admin.waitlist.index', compact('waitlists', 'stats', 'settings'));
     }
 
     // Admin: Show detail
@@ -92,47 +99,81 @@ class WaitlistController extends Controller
         return view('admin.waitlist.show', compact('waitlist'));
     }
 
-    // Admin: Transfer single waitlist to SPMB
+    // Admin: Schedule observation
+    public function scheduleObservation(Request $request, $id)
+    {
+        $waitlist = Waitlist::findOrFail($id);
+        
+        $request->validate([
+            'observation_date' => 'required|date|after:today',
+            'observation_notes' => 'nullable|string|max:500',
+        ], [
+            'observation_date.required' => 'Tanggal observasi wajib diisi',
+            'observation_date.after' => 'Tanggal observasi harus setelah hari ini',
+        ]);
+
+        $waitlist->scheduleObservation(
+            $request->observation_date,
+            $request->observation_notes
+        );
+
+        return back()->with('success', "Observasi untuk {$waitlist->child_name} dijadwalkan pada " . 
+            \Carbon\Carbon::parse($request->observation_date)->format('d M Y H:i'));
+    }
+
+    // Admin: Mark as passed observation
+    public function markPassed(Request $request, $id)
+    {
+        $waitlist = Waitlist::findOrFail($id);
+        $waitlist->markPassed($request->observation_notes);
+
+        return back()->with('success', "{$waitlist->child_name} dinyatakan LULUS observasi!");
+    }
+
+    // Admin: Mark as failed observation
+    public function markFailed(Request $request, $id)
+    {
+        $waitlist = Waitlist::findOrFail($id);
+        $waitlist->markFailed($request->observation_notes);
+
+        return back()->with('success', "{$waitlist->child_name} tidak lulus observasi.");
+    }
+
+    // Admin: Transfer to Administrasi (after passed observation)
     public function transfer($id)
     {
         $waitlist = Waitlist::findOrFail($id);
         
-        if ($waitlist->status !== 'waiting') {
-            return back()->with('error', 'Pendaftar ini sudah ditransfer atau dibatalkan.');
+        if ($waitlist->status !== Waitlist::STATUS_PASSED) {
+            return back()->with('error', 'Hanya yang lulus observasi yang bisa lanjut administrasi.');
         }
 
-        $waitlist->transferToApplicant();
-
-        return back()->with('success', "Berhasil mentransfer {$waitlist->child_name} ke pendaftar SPMB.");
+        try {
+            $applicant = $waitlist->transferToApplicant();
+            return back()->with('success', "{$waitlist->child_name} berhasil lanjut ke tahap administrasi.");
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
-    // Admin: Transfer all waiting to SPMB
-    public function transferAll()
+    // Admin: Batch schedule observation
+    public function batchSchedule(Request $request)
     {
-        $settings = Setting::getSettings();
-        $waitingList = Waitlist::waiting()->get();
-        
-        if ($waitingList->isEmpty()) {
-            return back()->with('error', 'Tidak ada data di daftar tunggu.');
-        }
+        $request->validate([
+            'ids' => 'required|array',
+            'observation_date' => 'required|date|after:today',
+        ]);
 
-        $transferred = 0;
-        $quota = $settings->getRemainingQuota();
-
-        foreach ($waitingList as $waitlist) {
-            if ($transferred >= $quota) {
-                break; // Stop if quota reached
+        $count = 0;
+        foreach ($request->ids as $id) {
+            $waitlist = Waitlist::find($id);
+            if ($waitlist && $waitlist->status === Waitlist::STATUS_WAITING) {
+                $waitlist->scheduleObservation($request->observation_date, $request->observation_notes);
+                $count++;
             }
-            $waitlist->transferToApplicant();
-            $transferred++;
         }
 
-        // Open SPMB if it was waitlist_only
-        if ($settings->spmb_status === 'waitlist_only') {
-            $settings->update(['spmb_status' => 'open']);
-        }
-
-        return back()->with('success', "Berhasil mentransfer {$transferred} pendaftar ke SPMB!");
+        return back()->with('success', "{$count} pendaftar dijadwalkan observasi.");
     }
 
     // Admin: Cancel waitlist entry
@@ -142,5 +183,31 @@ class WaitlistController extends Controller
         $waitlist->update(['status' => 'cancelled']);
 
         return back()->with('success', "Pendaftaran {$waitlist->child_name} dibatalkan.");
+    }
+
+    // Admin: Send WhatsApp notification
+    public function getWhatsappLink($id)
+    {
+        $waitlist = Waitlist::findOrFail($id);
+        $settings = Setting::getSettings();
+        
+        $phone = preg_replace('/[^0-9]/', '', $waitlist->phone);
+        if (substr($phone, 0, 1) === '0') {
+            $phone = '62' . substr($phone, 1);
+        }
+
+        $message = "Assalamualaikum Bapak/Ibu {$waitlist->father_name},\n\n";
+        $message .= "Terima kasih telah mendaftarkan {$waitlist->child_name} di {$settings->school_name}.\n\n";
+        
+        if ($waitlist->observation_date) {
+            $message .= "Jadwal Observasi:\n";
+            $message .= "📅 " . $waitlist->observation_date->format('l, d F Y') . "\n";
+            $message .= "🕐 " . $waitlist->observation_date->format('H:i') . " WITA\n\n";
+            $message .= "Mohon hadir tepat waktu bersama ananda.\n\n";
+        }
+        
+        $message .= "Terima kasih,\nPanitia SPMB";
+
+        return "https://wa.me/{$phone}?text=" . urlencode($message);
     }
 }

@@ -218,10 +218,35 @@
                 @endif
             </div>
 
-            <!-- Section C: Kontak -->
+            <!-- Section C: Dokumen Pendukung -->
+            @if($applicant->declaration_file)
             <div class="border-t border-slate-200 pt-6">
                 <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <span class="w-8 h-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center text-sm">C</span>
+                    <span class="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center text-sm">C</span>
+                    Dokumen Pendukung
+                </h3>
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white rounded-lg border border-slate-200 flex items-center justify-center text-red-500">
+                            <i class="ph ph-file-pdf text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800">Surat Pernyataan</p>
+                            <p class="text-xs text-slate-500">Diunggah: {{ $applicant->updated_at->format('d M Y') }}</p>
+                        </div>
+                    </div>
+                    <a href="{{ asset('storage/' . $applicant->declaration_file) }}" target="_blank" 
+                       class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold rounded-lg transition-colors flex items-center gap-2">
+                        <i class="ph ph-eye"></i> Lihat
+                    </a>
+                </div>
+            </div>
+            @endif
+
+            <!-- Section D: Kontak -->
+            <div class="border-t border-slate-200 pt-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <span class="w-8 h-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center text-sm">D</span>
                     Informasi Kontak
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">

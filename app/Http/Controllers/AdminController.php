@@ -87,24 +87,70 @@ class AdminController extends Controller
 
     public function showLogin()
     {
+        // Redirect if already logged in
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
         return view('auth.login');
     }
 
     public function login(Request $request)
     {
+        // Rate limiting - check login attempts
+        $maxAttempts = 5;
+        $lockoutTime = 15; // minutes
+        
+        $ip = $request->ip();
+        $cacheKey = 'login_attempts_' . $ip;
+        $lockKey = 'login_lockout_' . $ip;
+        
+        // Check if locked out
+        if (cache()->has($lockKey)) {
+            $remainingTime = cache()->get($lockKey);
+            return back()->withErrors([
+                'email' => "Terlalu banyak percobaan login. Silakan tunggu {$remainingTime} menit lagi.",
+            ])->withInput($request->only('email'));
+        }
+        
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+            'email' => ['required', 'email', 'max:255'],
+            'password' => ['required', 'string', 'min:6'],
+        ], [
+            'email.required' => 'Email wajib diisi',
+            'email.email' => 'Format email tidak valid',
+            'password.required' => 'Password wajib diisi',
+            'password.min' => 'Password minimal 6 karakter',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        // Additional security: sanitize email
+        $credentials['email'] = strtolower(trim($credentials['email']));
+
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            // Successful login - clear attempts
+            cache()->forget($cacheKey);
+            cache()->forget($lockKey);
+            
             $request->session()->regenerate();
+            
             return redirect()->intended('dashboard');
         }
 
+        // Failed login - increment attempts
+        $attempts = cache()->get($cacheKey, 0) + 1;
+        cache()->put($cacheKey, $attempts, now()->addMinutes($lockoutTime));
+        
+        // Lock out after max attempts
+        if ($attempts >= $maxAttempts) {
+            cache()->put($lockKey, $lockoutTime, now()->addMinutes($lockoutTime));
+            return back()->withErrors([
+                'email' => "Terlalu banyak percobaan login ({$attempts}x). Akun terkunci selama {$lockoutTime} menit.",
+            ])->withInput($request->only('email'));
+        }
+
+        $remainingAttempts = $maxAttempts - $attempts;
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ]);
+            'email' => "Email atau password salah. Sisa percobaan: {$remainingAttempts}x",
+        ])->withInput($request->only('email'));
     }
 
     public function logout(Request $request)

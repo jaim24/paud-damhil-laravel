@@ -14,18 +14,11 @@
             <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-2">
                 Biodata Anak Didik Baru
             </h1>
-            <p class="text-slate-500">Mohon diisi dengan lengkap oleh Orang Tua</p>
-            
-            @if(isset($tokenData))
-            <div class="mt-4 inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium">
-                <i class="ph-fill ph-check-circle"></i>
-                Token Valid: {{ $tokenData['child_name'] }}
-            </div>
-            @endif
+            <p class="text-slate-500">Mohon lengkapi data berikut dengan benar</p>
         </div>
 
         <!-- Form -->
-        <form action="{{ route('spmb.store') }}" method="POST" class="space-y-6">
+        <form action="{{ route('spmb.update') }}" method="POST" class="space-y-6">
             @csrf
 
             <!-- Section A: Keterangan Murid -->
@@ -45,7 +38,7 @@
                             <label class="block text-sm font-semibold text-slate-700 mb-2">
                                 1a. Nama Lengkap <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="child_name" value="{{ old('child_name', $prefillData['child_name'] ?? $tokenData['child_name'] ?? '') }}" required
+                            <input type="text" name="child_name" value="{{ old('child_name', $applicant->child_name ?? '') }}" required
                                    class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all @error('child_name') border-red-500 @enderror">
                             @error('child_name')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
                         </div>
@@ -60,7 +53,7 @@
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">2. Jenis Kelamin <span class="text-red-500">*</span></label>
                         <div class="flex gap-4">
-                            @php $selectedGender = old('gender', $prefillData['gender'] ?? 'L'); @endphp
+                            @php $selectedGender = old('gender', $applicant->gender ?? 'L'); @endphp
                             <label class="flex items-center gap-2 px-4 py-3 border-2 rounded-xl cursor-pointer transition-all {{ $selectedGender == 'L' ? 'border-blue-500 bg-blue-50' : 'border-slate-200' }}">
                                 <input type="radio" name="gender" value="L" {{ $selectedGender == 'L' ? 'checked' : '' }} class="w-4 h-4">
                                 <span>👦 Laki-laki</span>
@@ -76,12 +69,12 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-2">3a. Tempat Lahir <span class="text-red-500">*</span></label>
-                            <input type="text" name="birth_place" value="{{ old('birth_place', $prefillData['birth_place'] ?? '') }}" required
+                            <input type="text" name="birth_place" value="{{ old('birth_place', $applicant->birth_place ?? '') }}" required
                                    class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all @error('birth_place') border-red-500 @enderror">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-2">3b. Tanggal Lahir <span class="text-red-500">*</span></label>
-                            <input type="date" name="birth_date" value="{{ old('birth_date', $prefillData['birth_date'] ?? '') }}" required
+                            <input type="date" name="birth_date" value="{{ old('birth_date', $applicant->birth_date instanceof \Carbon\Carbon ? $applicant->birth_date->format('Y-m-d') : ($applicant->birth_date ?? '')) }}" required
                                    class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all @error('birth_date') border-red-500 @enderror">
                         </div>
                     </div>
@@ -181,7 +174,7 @@
                         <div class="space-y-3">
                             <div>
                                 <label class="text-xs text-slate-500 block mb-1">Jalan</label>
-                                <input type="text" name="address_street" value="{{ old('address_street', $prefillData['address'] ?? '') }}" required
+                                <input type="text" name="address_street" value="{{ old('address_street', $applicant->address_street ?? '') }}" required
                                        class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all @error('address_street') border-red-500 @enderror"
                                        placeholder="Nama jalan, nomor rumah, RT/RW">
                             </div>
@@ -269,12 +262,12 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="text-xs text-slate-500 block mb-1">Nama Ayah</label>
-                                <input type="text" name="father_name" value="{{ old('father_name', $prefillData['father_name'] ?? '') }}" required
+                                <input type="text" name="father_name" value="{{ old('father_name', $applicant->father_name ?? '') }}" required
                                        class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-200 outline-none transition-all @error('father_name') border-red-500 @enderror">
                             </div>
                             <div>
                                 <label class="text-xs text-slate-500 block mb-1">Nama Ibu</label>
-                                <input type="text" name="mother_name" value="{{ old('mother_name', $prefillData['mother_name'] ?? '') }}" required
+                                <input type="text" name="mother_name" value="{{ old('mother_name', $applicant->mother_name ?? '') }}" required
                                        class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-200 outline-none transition-all @error('mother_name') border-red-500 @enderror">
                             </div>
                         </div>
@@ -328,12 +321,12 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="text-xs text-slate-500 block mb-1">Pekerjaan Ayah</label>
-                            <input type="text" name="father_job" value="{{ old('father_job', $prefillData['father_job'] ?? '') }}" placeholder="Contoh: PNS, Wiraswasta"
+                            <input type="text" name="father_job" value="{{ old('father_job', $applicant->father_job ?? '') }}" placeholder="Contoh: PNS, Wiraswasta"
                                    class="w-full px-3 py-2 border border-slate-200 rounded-lg">
                         </div>
                         <div>
                             <label class="text-xs text-slate-500 block mb-1">Pekerjaan Ibu</label>
-                            <input type="text" name="mother_job" value="{{ old('mother_job', $prefillData['mother_job'] ?? '') }}" placeholder="Contoh: IRT, Guru"
+                            <input type="text" name="mother_job" value="{{ old('mother_job', $applicant->mother_job ?? '') }}" placeholder="Contoh: IRT, Guru"
                                    class="w-full px-3 py-2 border border-slate-200 rounded-lg">
                         </div>
                     </div>
@@ -409,7 +402,7 @@
                             <label class="block text-sm font-semibold text-slate-700 mb-2">
                                 <i class="ph ph-whatsapp-logo text-green-500"></i> No. HP (WhatsApp) <span class="text-red-500">*</span>
                             </label>
-                            <input type="tel" name="phone" value="{{ old('phone', $prefillData['phone'] ?? $tokenData['phone'] ?? '') }}" required
+                            <input type="tel" name="phone" value="{{ old('phone', $applicant->phone ?? '') }}" required
                                    class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all @error('phone') border-red-500 @enderror"
                                    placeholder="08xxxxxxxxxx">
                             @error('phone')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror

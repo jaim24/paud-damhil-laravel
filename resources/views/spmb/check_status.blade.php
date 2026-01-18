@@ -55,18 +55,37 @@
                 @endif">
                 
                 <div class="text-center mb-4">
-                    @if($applicant->status == 'Accepted')
+                    @if($applicant->status == 'accepted')
                         <span class="text-6xl">🎉</span>
                         <h3 class="text-2xl font-bold text-green-700 mt-2">SELAMAT!</h3>
                         <p class="text-green-600">Pendaftaran Anda DITERIMA</p>
-                    @elseif($applicant->status == 'Rejected')
+                    @elseif($applicant->status == 'rejected')
                         <span class="text-6xl">😔</span>
                         <h3 class="text-2xl font-bold text-red-700 mt-2">Mohon Maaf</h3>
                         <p class="text-red-600">Pendaftaran Tidak Dapat Kami Terima</p>
+                    @elseif($applicant->status == 'administrasi')
+                        <span class="text-6xl">📝</span>
+                        <h3 class="text-2xl font-bold text-blue-700 mt-2">Lengkapi Data</h3>
+                        <p class="text-blue-600 mb-4">Silakan lengkapi formulir pendaftaran</p>
+                        
+                        <a href="{{ route('spmb.form') }}" 
+                           class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-blue-200">
+                            <i class="ph ph-pencil-simple text-xl"></i>
+                            Lengkapi Formulir
+                        </a>
+                    @elseif($applicant->status == 'declaration')
+                        <span class="text-6xl">📄</span>
+                        <h3 class="text-2xl font-bold text-purple-700 mt-2">Surat Pernyataan</h3>
+                        <p class="text-purple-600 mb-4">Mohon unggah surat pernyataan</p>
+                        <a href="{{ route('spmb.declaration.form') }}" 
+                           class="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-purple-200">
+                            <i class="ph ph-upload-simple text-xl"></i>
+                            Unggah Surat Pernyataan
+                        </a>
                     @else
                         <span class="text-6xl">⏳</span>
                         <h3 class="text-2xl font-bold text-amber-700 mt-2">Menunggu Verifikasi</h3>
-                        <p class="text-amber-600">Pendaftaran sedang diproses</p>
+                        <p class="text-amber-600">Status: {{ $applicant->status_label }}</p>
                     @endif
                 </div>
                 

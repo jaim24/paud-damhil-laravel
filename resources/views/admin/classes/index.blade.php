@@ -92,10 +92,10 @@
                class="p-2 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors" title="Edit">
                 <i class="ph ph-pencil-simple"></i>
             </a>
-            <form action="{{ route('classes.destroy', $class->id) }}" method="POST" 
-                  onsubmit="return confirm('Yakin hapus kelas ini?')">
+            <form action="{{ route('classes.destroy', $class->id) }}" method="POST">
                 @csrf @method('DELETE')
-                <button type="submit" class="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
+                <button type="button" onclick="showDeleteModal(this, '{{ $class->name }}')" 
+                        class="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
                     <i class="ph ph-trash"></i>
                 </button>
             </form>

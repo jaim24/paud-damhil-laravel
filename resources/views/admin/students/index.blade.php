@@ -203,10 +203,9 @@
                                class="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors" title="Edit">
                                 <i class="ph ph-pencil-simple text-lg"></i>
                             </a>
-                            <form action="{{ route('students.destroy', $student->id) }}" method="POST" 
-                                  onsubmit="return confirm('Yakin hapus data siswa ini?')">
+                            <form action="{{ route('students.destroy', $student->id) }}" method="POST">
                                 @csrf @method('DELETE')
-                                <button type="submit" 
+                                <button type="button" onclick="showDeleteModal(this, '{{ $student->name }}')"
                                         class="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
                                     <i class="ph ph-trash text-lg"></i>
                                 </button>
