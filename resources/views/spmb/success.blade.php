@@ -54,7 +54,7 @@
                         if (substr($whatsappNumber, 0, 1) === '0') {
                             $whatsappNumber = '62' . substr($whatsappNumber, 1);
                         }
-                        $whatsappMessage = urlencode("Halo, saya baru saja mendaftar di SPMB PAUD Damhil. Mohon informasi selanjutnya.");
+                        $whatsappMessage = urlencode("Halo, saya baru saja mendaftar di SPMB PAUD Pintar. Mohon informasi selanjutnya.");
                     @endphp
                     
                     <a href="https://wa.me/{{ $whatsappNumber }}?text={{ $whatsappMessage }}" 

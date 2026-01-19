@@ -143,14 +143,14 @@
         </div>
 
         <p style="margin-top: 20px;">
-            Sebagai anak didik baru di <strong>TK/KB Damhil DWP Universitas Negeri Gorontalo</strong> 
+            Sebagai anak didik baru di <strong>PAUD Pintar</strong> 
             Tahun Ajaran <strong>{{ $academicYear ?? date('Y') . '/' . (date('Y') + 1) }}</strong> 
             dan bersedia memenuhi semua persyaratan/tata tertib (aturan) yang telah ditentukan oleh Sekolah.
         </p>
 
         <p>
             Demikian surat pernyataan ini saya buat dengan harapan agar anak saya 
-            dapat diterima di TK/KB Damhil DWP Universitas Negeri Gorontalo.
+            dapat diterima di PAUD Pintar.
         </p>
 
         <div class="signature-area">

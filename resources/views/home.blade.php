@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Beranda - PAUD Damhil UNG')
+@section('title', 'Beranda - PAUD Pintar')
 
 @section('content')
 <!-- Hero Section with Fun Decorations -->
 <section class="hero relative overflow-hidden">
     <!-- Background Image with Overlay -->
     <div class="absolute inset-0">
-        <img src="{{ asset('images/hero-background.jpg') }}" alt="PAUD Damhil" class="w-full h-full object-cover">
+        <img src="{{ asset('images/hero-background.jpg') }}" alt="PAUD Pintar" class="w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-b from-white/85 via-white/80 to-white/90"></div>
     </div>
     
@@ -48,7 +48,7 @@
         </span>
         <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800 mb-6 leading-tight">
             {{ $settings->welcome_text ?? 'Selamat Datang di' }} <br>
-            <span class="bg-gradient-to-r from-sky-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">{{ $settings->school_name ?? 'PAUD Damhil UNG' }}</span>
+            <span class="bg-gradient-to-r from-sky-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">{{ $settings->school_name ?? 'PAUD Pintar' }}</span>
         </h1>
         <p class="text-lg text-slate-600 mb-8 max-w-xl mx-auto">
             {{ $settings->sub_text ?? 'Membentuk generasi emas yang cerdas, ceria, dan berakhlak mulia melalui pendidikan yang menyenangkan!' }}
@@ -90,7 +90,7 @@
 <section class="container py-20">
     <div class="text-center mb-16">
         <span class="inline-block px-4 py-2 bg-amber-100 text-amber-600 rounded-full text-sm font-bold mb-4">🌟 Keunggulan Kami</span>
-        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-800">Kenapa Memilih PAUD Damhil?</h2>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-800">Kenapa Memilih PAUD Pintar?</h2>
     </div>
     
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -211,7 +211,7 @@
     <div class="container">
         <div class="text-center mb-12">
             <span class="inline-block px-4 py-2 bg-pink-100 text-pink-600 rounded-full text-sm font-bold mb-4">📷 Galeri Kegiatan</span>
-            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-800">Kegiatan PAUD Damhil</h2>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-800">Kegiatan PAUD Pintar</h2>
             <p class="text-slate-500 max-w-xl mx-auto mt-3">Dokumentasi momen-momen berharga kegiatan belajar dan bermain</p>
         </div>
         

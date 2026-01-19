@@ -38,7 +38,7 @@
                     <label class="block text-sm font-medium text-slate-700 mb-2">
                         Nama Sekolah <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="school_name" value="{{ $settings->school_name ?? 'PAUD Damhil UNG' }}" required
+                    <input type="text" name="school_name" value="{{ $settings->school_name ?? 'PAUD Pintar' }}" required
                            class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all">
                 </div>
 

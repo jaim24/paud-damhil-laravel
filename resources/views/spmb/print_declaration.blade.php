@@ -97,7 +97,7 @@
     <a href="javascript:window.print()" class="btn-print no-print">🖨️ Cetak Surat</a>
 
     <div class="header">
-        <h1>PAUD DAMHIL GORONTALO</h1>
+        <h1>PAUD PINTAR</h1>
         <p>{{ $setting->school_address ?? 'Alamat Sekolah' }}</p>
         <p>Telp: {{ $setting->school_phone ?? '-' }} | Email: {{ $setting->school_email ?? '-' }}</p>
     </div>
@@ -133,7 +133,7 @@
         <ol>
             <li>Kami menyerahkan anak kami sepenuhnya kepada Pihak Sekolah untuk dididik, dibimbing, dan dilatih sesuai dengan program sekolah.</li>
             <li>Kami bersedia bekerja sama dengan pihak sekolah dalam hal pembinaan dan pengawasan anak kami.</li>
-            <li>Kami bersedia mematuhi segala peraturan dan tata tertib yang berlaku di PAUD Damhil Gorontalo.</li>
+            <li>Kami bersedia mematuhi segala peraturan dan tata tertib yang berlaku di PAUD Pintar.</li>
             <li>Kami bersedia memenuhi kewajiban administrasi sekolah tepat waktu.</li>
             <li>Apabila di kemudian hari kami melanggar pernyataan ini, kami bersedia menerima sanksi yang ditetapkan oleh sekolah.</li>
         </ol>
