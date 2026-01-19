@@ -57,13 +57,56 @@
                 </div>
 
                 <!-- Nama Lengkap -->
-                <div>
+                <div class="col-span-1 md:col-span-1">
                     <label class="block text-sm font-medium text-slate-700 mb-2">
                         Nama Lengkap <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="name" required
                            class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
                            placeholder="Contoh: Siti Aminah, S.Pd">
+                </div>
+
+                <!-- NIP & Auth Info -->
+                <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <div class="md:col-span-3 pb-2 border-b border-slate-200 mb-2">
+                        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                            <i class="ph ph-lock-key"></i> Informasi Login (Aplikasi Absensi)
+                        </h3>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            NIP (Username) <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="nip" required
+                               class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all font-mono"
+                               placeholder="19850101...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            Email <span class="text-xs text-slate-500">(Opsional)</span>
+                        </label>
+                        <input type="email" name="email"
+                               class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
+                               placeholder="guru@sekolah.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            No. HP <span class="text-xs text-slate-500">(Untuk WA)</span>
+                        </label>
+                        <input type="text" name="phone"
+                               class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
+                               placeholder="0812...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            Password Login
+                        </label>
+                        <input type="password" name="password" 
+                               class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
+                               placeholder="Minimal 6 karakter">
+                        <p class="text-xs text-slate-500 mt-1">Kosongkan jika password otomatis</p>
+                    </div>
                 </div>
 
                 <!-- Jabatan -->

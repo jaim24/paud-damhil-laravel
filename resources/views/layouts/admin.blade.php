@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Admin Dashboard') - PAUD Damhil UNG</title>
+    <title>@yield('title', 'Admin Dashboard') - PAUD Pintar</title>
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -50,7 +50,7 @@
                     <i class="ph-fill ph-graduation-cap text-xl lg:text-2xl text-white"></i>
                 </div>
                 <div>
-                    <h1 class="font-extrabold text-base lg:text-lg tracking-tight">PAUD Damhil</h1>
+                    <h1 class="font-extrabold text-base lg:text-lg tracking-tight">PAUD Pintar</h1>
                     <p class="text-[10px] lg:text-xs text-blue-300/80 font-medium">Admin Panel</p>
                 </div>
                 <!-- Mobile Close Button -->
@@ -94,6 +94,34 @@
                         <i class="ph-fill ph-list-checks text-lg"></i>
                     </div>
                     <span class="font-semibold text-sm">Persyaratan</span>
+                </a>
+
+                <!-- Absensi -->
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mt-4 mb-2">Absensi Guru</p>
+                
+                <a href="{{ route('attendances.index') }}" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-white transition-all border-l-4 border-transparent {{ request()->routeIs('attendances.index') ? 'active' : '' }}">
+                    <div class="link-icon w-9 h-9 bg-slate-800/50 group-hover:bg-teal-500/20 rounded-lg flex items-center justify-center transition-all">
+                        <i class="ph-fill ph-clipboard-text text-lg"></i>
+                    </div>
+                    <span class="font-semibold text-sm">Kehadiran Harian</span>
+                </a>
+
+                <a href="{{ route('attendances.monthly') }}" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-white transition-all border-l-4 border-transparent {{ request()->routeIs('attendances.monthly') ? 'active' : '' }}">
+                    <div class="link-icon w-9 h-9 bg-slate-800/50 group-hover:bg-indigo-500/20 rounded-lg flex items-center justify-center transition-all">
+                        <i class="ph-fill ph-calendar-check text-lg"></i>
+                    </div>
+                    <span class="font-semibold text-sm">Rekap Bulanan</span>
+                </a>
+
+                <a href="{{ route('attendances.leave_requests') }}" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-white transition-all border-l-4 border-transparent {{ request()->routeIs('attendances.leave_requests') ? 'active' : '' }}">
+                    <div class="link-icon w-9 h-9 bg-slate-800/50 group-hover:bg-amber-500/20 rounded-lg flex items-center justify-center transition-all">
+                        <i class="ph-fill ph-envelope text-lg"></i>
+                    </div>
+                    <span class="font-semibold text-sm">Pengajuan Izin</span>
+                    @php $pendingCount = \App\Models\LeaveRequest::pending()->count(); @endphp
+                    @if($pendingCount > 0)
+                    <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $pendingCount }}</span>
+                    @endif
                 </a>
 
                 <!-- Data Master -->

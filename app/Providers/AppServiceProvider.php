@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
         // Share settings globally to all views
         View::composer('*', function ($view) {
             $settings = Setting::first() ?? new Setting([
-                'school_name' => 'PAUD Damhil UNG',
+                'school_name' => 'PAUD Pintar',
                 'welcome_text' => 'Selamat Datang di',
                 'sub_text' => 'Membentuk generasi emas yang cerdas, ceria, dan berakhlak mulia',
                 'contact_phone' => '08123456789',

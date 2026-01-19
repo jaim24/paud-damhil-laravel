@@ -243,10 +243,43 @@
             </div>
             @endif
 
-            <!-- Section D: Kontak -->
+            <!-- Bukti Pembayaran -->
+            @if($applicant->payment_proof)
             <div class="border-t border-slate-200 pt-6">
                 <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <span class="w-8 h-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center text-sm">D</span>
+                    <span class="w-8 h-8 bg-teal-100 text-teal-600 rounded-lg flex items-center justify-center text-sm">💳</span>
+                    Bukti Pembayaran
+                </h3>
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-white rounded-lg border border-slate-200 flex items-center justify-center text-teal-500">
+                                <i class="ph ph-receipt text-2xl"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-800">Bukti Transfer</p>
+                                <p class="text-xs text-slate-500">Diunggah: {{ $applicant->payment_date ? \Carbon\Carbon::parse($applicant->payment_date)->format('d M Y H:i') : '-' }}</p>
+                            </div>
+                        </div>
+                        <a href="{{ asset('storage/' . $applicant->payment_proof) }}" target="_blank" 
+                           class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold rounded-lg transition-colors flex items-center gap-2">
+                            <i class="ph ph-eye"></i> Lihat
+                        </a>
+                    </div>
+                    @if($applicant->notes)
+                    <div class="bg-white rounded-lg p-3 border border-slate-100">
+                        <p class="text-xs text-slate-500 mb-1">Catatan dari Orang Tua:</p>
+                        <p class="text-sm text-slate-700">{{ $applicant->notes }}</p>
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @endif
+
+            <!-- Section E: Kontak -->
+            <div class="border-t border-slate-200 pt-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <span class="w-8 h-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center text-sm">E</span>
                     Informasi Kontak
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -274,24 +307,41 @@
         </div>
 
         <!-- Actions -->
-        @if($applicant->status == 'Pending')
-        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
-            <form action="{{ route('spmb.admin.update_status', $applicant->id) }}" method="POST" class="flex-1">
-                @csrf @method('PATCH')
-                <input type="hidden" name="status" value="Accepted">
-                <button type="submit" onclick="return confirm('Terima pendaftar ini?')"
-                        class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl transition-colors">
-                    <i class="ph ph-check-circle text-xl"></i> Terima
-                </button>
-            </form>
-            <form action="{{ route('spmb.admin.update_status', $applicant->id) }}" method="POST" class="flex-1">
-                @csrf @method('PATCH')
-                <input type="hidden" name="status" value="Rejected">
-                <button type="submit" onclick="return confirm('Tolak pendaftar ini?')"
-                        class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-colors">
-                    <i class="ph ph-x-circle text-xl"></i> Tolak
-                </button>
-            </form>
+        @if(in_array($applicant->status, ['paid', 'payment', 'declaration']))
+        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100">
+            <div class="flex flex-wrap gap-3">
+                @if($applicant->status == 'paid')
+                <!-- Pendaftar sudah bayar, admin bisa terima/tolak -->
+                <form action="{{ route('spmb.admin.accept', $applicant->id) }}" method="POST" class="flex-1">
+                    @csrf
+                    <button type="button" onclick="showDeleteModal(this, '{{ $applicant->child_name }}', 'Terima pendaftar ini sebagai siswa?', 'Terima')"
+                            class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl transition-colors">
+                        <i class="ph ph-check-circle text-xl"></i> Terima Sebagai Siswa
+                    </button>
+                </form>
+                <form action="{{ route('spmb.admin.reject', $applicant->id) }}" method="POST" class="flex-1">
+                    @csrf
+                    <button type="button" onclick="showDeleteModal(this, '{{ $applicant->child_name }}', 'Tolak pendaftar ini?', 'Tolak')"
+                            class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-colors">
+                        <i class="ph ph-x-circle text-xl"></i> Tolak
+                    </button>
+                </form>
+                @else
+                <!-- Status lain: Menunggu kelengkapan data -->
+                <div class="w-full text-center py-3 bg-amber-100 text-amber-700 rounded-xl">
+                    <i class="ph ph-hourglass text-lg"></i>
+                    Menunggu kelengkapan data dari pendaftar (Status: {{ ucfirst($applicant->status) }})
+                </div>
+                @endif
+            </div>
+        </div>
+        @elseif($applicant->status == 'accepted')
+        <div class="px-6 py-4 bg-green-50 border-t border-green-200 text-center">
+            <p class="text-green-700 font-bold"><i class="ph ph-check-circle"></i> Pendaftar ini sudah DITERIMA sebagai siswa</p>
+        </div>
+        @elseif($applicant->status == 'rejected')
+        <div class="px-6 py-4 bg-red-50 border-t border-red-200 text-center">
+            <p class="text-red-700 font-bold"><i class="ph ph-x-circle"></i> Pendaftar ini DITOLAK</p>
         </div>
         @endif
     </div>

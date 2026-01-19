@@ -26,12 +26,28 @@ class Setting extends Model
         'spmb_start_date',
         'spmb_end_date',
         'spmb_closed_message',
+        // Payment Settings
+        'bank_name',
+        'bank_account',
+        'bank_holder',
+        'registration_fee',
+        // Attendance Settings
+        'school_latitude',
+        'school_longitude',
+        'geofence_radius',
+        'work_start_time',
+        'work_end_time',
+        'late_tolerance_minutes',
     ];
 
     protected $casts = [
         'spmb_start_date' => 'date',
         'spmb_end_date' => 'date',
         'spmb_quota' => 'integer',
+        'school_latitude' => 'decimal:8',
+        'school_longitude' => 'decimal:8',
+        'geofence_radius' => 'integer',
+        'late_tolerance_minutes' => 'integer',
     ];
 
     // Helper to get the first settings record

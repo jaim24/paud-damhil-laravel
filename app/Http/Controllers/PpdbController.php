@@ -32,12 +32,8 @@ class PpdbController extends Controller
         $applicant = Applicant::where('phone', $request->phone)->first();
 
         if ($applicant) {
-            // If status is 'administrasi', allow them to edit/complete data
-            if ($applicant->status === 'administrasi') {
-                Session::put('applicant_auth', $applicant->id);
-            }
-            // If status is 'declaration', allow access to upload page (logic can be added here or in middleware)
-            if ($applicant->status === 'declaration') {
+            // Set session for statuses that need access to forms/uploads
+            if (in_array($applicant->status, ['administrasi', 'declaration', 'payment'])) {
                 Session::put('applicant_auth', $applicant->id);
             }
 
@@ -227,6 +223,66 @@ class PpdbController extends Controller
         $setting = Setting::first();
 
         return view('spmb.print_declaration', compact('applicant', 'setting'));
+    }
+
+    // Show payment upload form
+    public function showUploadPayment()
+    {
+        $applicantId = Session::get('applicant_auth');
+        
+        if (!$applicantId) {
+            return redirect()->route('spmb.status')->with('error', 'Sesi berakhir. Silakan cek status untuk login.');
+        }
+
+        $applicant = Applicant::findOrFail($applicantId);
+
+        if ($applicant->status !== 'payment') {
+            return redirect()->route('spmb.status')->with('info', 'Status pendaftaran Anda saat ini bukan tahap pembayaran.');
+        }
+
+        $setting = Setting::first();
+
+        return view('spmb.upload_payment', compact('applicant', 'setting'));
+    }
+
+    // Store uploaded payment proof
+    public function storePayment(Request $request)
+    {
+        $applicantId = Session::get('applicant_auth');
+        
+        if (!$applicantId) {
+            return redirect()->route('spmb.status');
+        }
+
+        $applicant = Applicant::findOrFail($applicantId);
+
+        if ($applicant->status !== 'payment') {
+            return redirect()->route('spmb.status')->with('error', 'Status tidak valid untuk upload bukti pembayaran.');
+        }
+
+        $request->validate([
+            'payment_proof' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'payment_notes' => 'nullable|string|max:500',
+        ], [
+            'payment_proof.required' => 'Bukti pembayaran wajib diunggah',
+            'payment_proof.max' => 'Ukuran file maksimal 2MB',
+            'payment_proof.mimes' => 'Format file harus PDF atau Gambar (JPG, PNG)',
+        ]);
+
+        if ($request->hasFile('payment_proof')) {
+            $path = $request->file('payment_proof')->store('payment_proofs', 'public');
+            
+            $applicant->update([
+                'payment_proof' => $path,
+                'notes' => $request->payment_notes,
+                'payment_date' => now(),
+                'status' => 'paid' // Move to next step: Waiting admin verification
+            ]);
+            
+            return redirect()->route('spmb.status')->with('success', 'Bukti pembayaran berhasil diunggah! Silakan tunggu verifikasi dari admin.');
+        }
+
+        return back()->with('error', 'Gagal mengunggah file.');
     }
 }
 

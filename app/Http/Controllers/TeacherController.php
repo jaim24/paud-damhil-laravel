@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Teacher;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 
 class TeacherController extends Controller
 {
@@ -17,7 +18,8 @@ class TeacherController extends Controller
             $search = $request->search;
             $query->where(function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('position', 'like', "%{$search}%");
+                  ->orWhere('position', 'like', "%{$search}%")
+                  ->orWhere('nip', 'like', "%{$search}%");
             });
         }
         
@@ -33,7 +35,11 @@ class TeacherController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
+            'nip' => 'nullable|string|max:20|unique:teachers,nip',
             'name' => 'required|string|max:255',
+            'email' => 'nullable|email|unique:teachers,email',
+            'phone' => 'nullable|string|max:20',
+            'password' => 'nullable|string|min:6', // Optional saat create, tapi disarankan
             'position' => 'required|string',
             'education' => 'nullable|string|max:255',
             'status' => 'nullable|in:active,inactive',
@@ -45,6 +51,13 @@ class TeacherController extends Controller
         // Handle photo upload
         if ($request->hasFile('photo')) {
             $data['photo'] = $request->file('photo')->store('teachers', 'public');
+        }
+
+        // Hash password if provided
+        if (!empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']); // Jangan simpan password kosong
         }
 
         $data['show_public'] = $request->has('show_public');
@@ -62,7 +75,11 @@ class TeacherController extends Controller
     public function update(Request $request, Teacher $teacher)
     {
         $data = $request->validate([
+            'nip' => 'nullable|string|max:20|unique:teachers,nip,' . $teacher->id,
             'name' => 'required|string|max:255',
+            'email' => 'nullable|email|unique:teachers,email,' . $teacher->id,
+            'phone' => 'nullable|string|max:20',
+            'password' => 'nullable|string|min:6', // Boleh kosong jika tak ingin ubah
             'position' => 'required|string',
             'education' => 'nullable|string|max:255',
             'status' => 'required|in:active,inactive',
@@ -81,7 +98,14 @@ class TeacherController extends Controller
             $data['photo'] = $request->file('photo')->store('teachers', 'public');
         }
 
-        $data['show_public'] = $request->has('show_public');
+        // Handle password update
+        if (!empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']); // Keep old password
+        }
+
+        $teacher->show_public = $request->has('show_public');
         
         $teacher->update($data);
         return redirect()->route('teachers.index')->with('success', 'Data guru berhasil diperbarui!');

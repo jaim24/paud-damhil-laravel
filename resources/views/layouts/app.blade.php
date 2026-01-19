@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'PAUD Damhil UNG')</title>
+    <title>@yield('title', 'PAUD Pintar')</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
     <!-- Phosphor Icons -->
@@ -40,7 +40,7 @@
                 @else
                 <i class="ph-fill ph-graduation-cap text-2xl"></i>
                 @endif
-                <span class="font-bold">{{ $settings->school_name ?? 'PAUD Damhil UNG' }}</span>
+                <span class="font-bold">{{ $settings->school_name ?? 'PAUD Pintar' }}</span>
             </a>
             <button class="mobile-menu-btn" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
                 <i class="ph ph-list"></i>
@@ -106,7 +106,7 @@
                         @else
                         <i class="ph-fill ph-graduation-cap text-sky-400"></i>
                         @endif
-                        {{ $settings->school_name ?? 'PAUD Damhil UNG' }}
+                        {{ $settings->school_name ?? 'PAUD Pintar' }}
                     </h3>
                     <p class="text-slate-400 leading-relaxed mb-6">
                         {{ $settings->about ?? 'Membangun generasi emas yang cerdas, ceria, dan berakhlak mulia. Pendidikan anak usia dini yang berkualitas untuk masa depan Indonesia.' }}
@@ -170,7 +170,7 @@
         <!-- Copyright -->
         <div class="border-t border-slate-800 py-6">
             <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm">
-                <p>&copy; {{ date('Y') }} {{ $settings->school_name ?? 'PAUD Damhil UNG' }}. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} {{ $settings->school_name ?? 'PAUD Pintar' }}. All rights reserved.</p>
                 <p>Dibangun dengan <i class="ph-fill ph-heart text-red-500"></i> di Gorontalo</p>
             </div>
         </div>

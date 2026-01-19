@@ -16,6 +16,14 @@ class SettingController extends Controller
 
     public function update(Request $request)
     {
+        // Sanitize coordinates (replace comma with dot if user inputs 1,23)
+        if ($request->has('school_latitude')) {
+            $request->merge(['school_latitude' => str_replace(',', '.', $request->school_latitude)]);
+        }
+        if ($request->has('school_longitude')) {
+            $request->merge(['school_longitude' => str_replace(',', '.', $request->school_longitude)]);
+        }
+
         $data = $request->validate([
             'school_name' => 'required|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
@@ -33,6 +41,18 @@ class SettingController extends Controller
             'spmb_start_date' => 'nullable|date',
             'spmb_end_date' => 'nullable|date',
             'spmb_closed_message' => 'nullable|string',
+            // Payment Settings
+            'bank_name' => 'nullable|string|max:100',
+            'bank_account' => 'nullable|string|max:50',
+            'bank_holder' => 'nullable|string|max:100',
+            'registration_fee' => 'nullable|numeric|min:0',
+            // Attendance Settings
+            'school_latitude' => 'nullable|numeric',
+            'school_longitude' => 'nullable|numeric',
+            'geofence_radius' => 'nullable|integer|min:10|max:500',
+            'work_start_time' => 'nullable|date_format:H:i',
+            'work_end_time' => 'nullable|date_format:H:i',
+            'late_tolerance_minutes' => 'nullable|integer|min:0|max:60',
         ]);
 
         $settings = Setting::first();

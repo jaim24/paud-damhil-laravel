@@ -272,6 +272,128 @@
             </div>
         </div>
 
+        <!-- Pengaturan Pembayaran -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200">
+                <div class="w-10 h-10 bg-teal-100 text-teal-600 rounded-lg flex items-center justify-center">
+                    <i class="ph ph-credit-card text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">Pengaturan Pembayaran</h3>
+                    <p class="text-sm text-slate-500">Informasi rekening dan biaya pendaftaran</p>
+                </div>
+            </div>
+
+            <div class="space-y-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Bank Name -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Nama Bank</label>
+                        <input type="text" name="bank_name" value="{{ $settings->bank_name ?? '' }}"
+                               class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
+                               placeholder="Contoh: Bank BNI">
+                    </div>
+                    <!-- Bank Account -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Nomor Rekening</label>
+                        <input type="text" name="bank_account" value="{{ $settings->bank_account ?? '' }}"
+                               class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all font-mono"
+                               placeholder="Contoh: 1234567890">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Bank Holder -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Atas Nama</label>
+                        <input type="text" name="bank_holder" value="{{ $settings->bank_holder ?? '' }}"
+                               class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
+                               placeholder="Contoh: PAUD Damhil UNG">
+                    </div>
+                    <!-- Registration Fee -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Biaya Pendaftaran</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-medium">Rp</span>
+                            <input type="text" id="registration_fee_display" 
+                                   value="{{ number_format($settings->registration_fee ?? 500000, 0, ',', '.') }}"
+                                   class="w-full pl-12 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
+                                   placeholder="500.000"
+                                   oninput="formatCurrency(this)">
+                            <input type="hidden" name="registration_fee" id="registration_fee_value" value="{{ $settings->registration_fee ?? 500000 }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pengaturan Absensi -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200">
+                <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center">
+                    <i class="ph ph-map-pin text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">Pengaturan Absensi (Geofencing)</h3>
+                    <p class="text-sm text-slate-500">Lokasi sekolah dan jam kerja untuk validasi absensi Flutter</p>
+                </div>
+            </div>
+
+            <div class="space-y-5">
+                <!-- Lokasi Sekolah -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Latitude Sekolah</label>
+                        <input type="text" name="school_latitude" value="{{ old('school_latitude', $settings->school_latitude) }}"
+                               class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all font-mono"
+                               placeholder="-6.175110">
+                        @error('school_latitude') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Longitude Sekolah</label>
+                        <input type="text" name="school_longitude" value="{{ old('school_longitude', $settings->school_longitude) }}"
+                               class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all font-mono"
+                               placeholder="106.827220">
+                        @error('school_longitude') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Radius Toleransi (meter)</label>
+                        <input type="number" name="geofence_radius" value="{{ old('geofence_radius', $settings->geofence_radius ?? 100) }}"
+                               class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
+                               placeholder="100" min="10" max="500">
+                        @error('geofence_radius') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+                
+                <!-- Jam Kerja -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Jam Masuk</label>
+                        <input type="time" name="work_start_time" value="{{ old('work_start_time', $settings->work_start_time ? date('H:i', strtotime($settings->work_start_time)) : '07:00') }}"
+                               class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all">
+                        @error('work_start_time') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Jam Pulang</label>
+                        <input type="time" name="work_end_time" value="{{ old('work_end_time', $settings->work_end_time ? date('H:i', strtotime($settings->work_end_time)) : '14:00') }}"
+                               class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all">
+                        @error('work_end_time') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Toleransi Terlambat (menit)</label>
+                        <input type="number" name="late_tolerance_minutes" value="{{ old('late_tolerance_minutes', $settings->late_tolerance_minutes ?? 30) }}"
+                               class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
+                               placeholder="30" min="0" max="60">
+                        @error('late_tolerance_minutes') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-blue-700 text-sm">
+                    <i class="ph ph-info"></i> 
+                    <strong>Catatan:</strong> Guru dianggap terlambat jika absen masuk setelah jam {{ $settings->work_start_time ?? '07:00' }} + {{ $settings->late_tolerance_minutes ?? 30 }} menit. 
+                    GPS guru harus berada dalam radius {{ $settings->geofence_radius ?? 100 }} meter dari lokasi sekolah.
+                </div>
+            </div>
+        </div>
+
         <!-- Submit -->
         <div class="flex justify-end">
             <button type="submit" class="inline-flex items-center gap-2 px-8 py-3 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl transition-colors shadow-lg">
@@ -280,4 +402,30 @@
         </div>
     </form>
 </div>
+
+<script>
+function formatCurrency(input) {
+    // Remove non-digit characters
+    let value = input.value.replace(/\D/g, '');
+    
+    // Format with thousand separator
+    if (value) {
+        value = parseInt(value).toLocaleString('id-ID');
+    }
+    
+    // Update display input
+    input.value = value;
+    
+    // Update hidden input with raw number
+    document.getElementById('registration_fee_value').value = value.replace(/\./g, '');
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const display = document.getElementById('registration_fee_display');
+    if (display) {
+        formatCurrency(display);
+    }
+});
+</script>
 @endsection

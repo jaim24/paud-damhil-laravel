@@ -82,10 +82,48 @@
                             <i class="ph ph-upload-simple text-xl"></i>
                             Unggah Surat Pernyataan
                         </a>
+                    @elseif($applicant->status == 'payment')
+                        <span class="text-6xl">💳</span>
+                        <h3 class="text-2xl font-bold text-teal-700 mt-2">Pembayaran</h3>
+                        <p class="text-teal-600 mb-4">Silakan lakukan pembayaran biaya pendaftaran</p>
+                        
+                        <!-- Info Pembayaran -->
+                        <div class="bg-white rounded-xl p-4 text-left mb-4 border border-teal-200">
+                            <h4 class="font-bold text-slate-700 mb-2">Informasi Pembayaran:</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-slate-500">Bank:</span>
+                                    <span class="font-bold text-slate-800">{{ $setting->bank_name ?? 'Bank Negara Indonesia (BNI)' }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-500">No. Rekening:</span>
+                                    <span class="font-bold text-slate-800 font-mono">{{ $setting->bank_account ?? '1234567890' }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-500">Atas Nama:</span>
+                                    <span class="font-bold text-slate-800">{{ $setting->bank_holder ?? 'PAUD Damhil Gorontalo' }}</span>
+                                </div>
+                                <div class="flex justify-between border-t pt-2 mt-2">
+                                    <span class="text-slate-500">Biaya Pendaftaran:</span>
+                                    <span class="font-bold text-teal-600 text-lg">Rp.{{ number_format($setting->registration_fee ?? 500000, 0, ',', '.') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a href="{{ route('spmb.payment.form') }}" 
+                           class="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-teal-200">
+                            <i class="ph ph-upload-simple text-xl"></i>
+                            Upload Bukti Pembayaran
+                        </a>
+                    @elseif($applicant->status == 'paid')
+                        <span class="text-6xl">✅</span>
+                        <h3 class="text-2xl font-bold text-emerald-700 mt-2">Pembayaran Diterima</h3>
+                        <p class="text-emerald-600 mb-2">Bukti pembayaran Anda sedang diverifikasi</p>
+                        <p class="text-sm text-slate-500">Silakan tunggu konfirmasi dari admin</p>
                     @else
                         <span class="text-6xl">⏳</span>
                         <h3 class="text-2xl font-bold text-amber-700 mt-2">Menunggu Verifikasi</h3>
-                        <p class="text-amber-600">Status: {{ $applicant->status_label }}</p>
+                        <p class="text-amber-600">Status: {{ $applicant->status_label ?? ucfirst($applicant->status) }}</p>
                     @endif
                 </div>
                 

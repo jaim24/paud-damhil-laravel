@@ -17,6 +17,8 @@ Route::post('/spmb/update', [PpdbController::class, 'update'])->name('spmb.updat
 Route::get('/spmb/surat-pernyataan', [PpdbController::class, 'showUploadDeclaration'])->name('spmb.declaration.form');
 Route::post('/spmb/surat-pernyataan', [PpdbController::class, 'storeDeclaration'])->name('spmb.declaration.store');
 Route::get('/spmb/surat-pernyataan/cetak', [PpdbController::class, 'printDeclaration'])->name('spmb.declaration.print');
+Route::get('/spmb/pembayaran', [PpdbController::class, 'showUploadPayment'])->name('spmb.payment.form');
+Route::post('/spmb/pembayaran', [PpdbController::class, 'storePayment'])->name('spmb.payment.store');
 Route::get('/spmb/success', function() { return view('spmb.success'); })->name('spmb.success');
 
 // SPP Routes
@@ -101,6 +103,20 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{requirement}', [\App\Http\Controllers\RequirementController::class, 'update'])->name('update');
         Route::delete('/{requirement}', [\App\Http\Controllers\RequirementController::class, 'destroy'])->name('destroy');
         Route::patch('/{requirement}/toggle', [\App\Http\Controllers\RequirementController::class, 'toggleActive'])->name('toggle');
+    });
+
+    // Attendance Admin Routes (Absensi Guru)
+    Route::prefix('admin/attendances')->name('attendances.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\AttendanceController::class, 'index'])->name('index');
+        Route::get('/monthly', [\App\Http\Controllers\AttendanceController::class, 'monthly'])->name('monthly');
+        Route::get('/teacher/{teacher}', [\App\Http\Controllers\AttendanceController::class, 'show'])->name('show');
+        Route::post('/', [\App\Http\Controllers\AttendanceController::class, 'store'])->name('store');
+        Route::get('/export', [\App\Http\Controllers\AttendanceController::class, 'export'])->name('export');
+        
+        // Leave Requests
+        Route::get('/leave-requests', [\App\Http\Controllers\AttendanceController::class, 'leaveRequests'])->name('leave_requests');
+        Route::post('/leave-requests/{leaveRequest}/approve', [\App\Http\Controllers\AttendanceController::class, 'approveLeave'])->name('approve_leave');
+        Route::post('/leave-requests/{leaveRequest}/reject', [\App\Http\Controllers\AttendanceController::class, 'rejectLeave'])->name('reject_leave');
     });
 });
 

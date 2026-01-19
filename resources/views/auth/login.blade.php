@@ -58,7 +58,7 @@
                     <div class="relative">
                         <input type="email" name="email" id="email"
                                class="w-full pl-12 pr-4 py-3.5 border-2 border-slate-200 rounded-xl focus:border-sky-400 focus:ring-4 focus:ring-sky-100 outline-none transition-all @error('email') border-red-400 @enderror" 
-                               placeholder="admin@pauddamhil.sch.id" 
+                               placeholder="admin@sekolah.sch.id" 
                                value="{{ old('email') }}"
                                required>
                         <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">

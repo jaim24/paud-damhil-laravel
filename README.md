@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="public/images/logo.png" alt="PAUD Damhil Logo" width="120" height="120">
+  <img src="public/images/logo.png" alt="PAUD Logo" width="120" height="120">
 </p>
 
-<h1 align="center">🎓 PAUD Damhil UNG</h1>
+<h1 align="center">🎓 Sistem Informasi Sekolah PAUD (SIMS)</h1>
 
 <p align="center">
-  <strong>Sistem Informasi Sekolah & SPMB (Seleksi Penerimaan Murid Baru)</strong>
+  <strong>Platform Terintegrasi untuk Manajemen Sekolah, Absensi, & Penerimaan Siswa Baru</strong>
 </p>
 
 <p align="center">
@@ -17,30 +17,30 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Laravel-12-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel">
-  <img src="https://img.shields.io/badge/PHP-8.3-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP">
+  <img src="https://img.shields.io/badge/Laravel-11-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel">
+  <img src="https://img.shields.io/badge/PHP-8.2-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP">
   <img src="https://img.shields.io/badge/TailwindCSS-3.x-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="TailwindCSS">
   <img src="https://img.shields.io/badge/MySQL-Database-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL">
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Status-Active%20Development-brightgreen?style=flat-square" alt="Status">
-  <img src="https://img.shields.io/badge/License-Educational-blue?style=flat-square" alt="License">
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License">
 </p>
 
 ---
 
 ## 🌟 Tentang Proyek
 
-**PAUD Damhil UNG** adalah sistem informasi sekolah modern yang dibangun khusus untuk PAUD Damhil Universitas Negeri Gorontalo. Aplikasi ini menyediakan solusi lengkap untuk manajemen sekolah PAUD, mulai dari pendaftaran siswa baru hingga pengelolaan pembayaran SPP.
+**Sistem Informasi Sekolah PAUD (SIMS)** adalah solusi aplikasi berbasis web dan API mobile yang dirancang untuk memodernisasi pengelolaan sekolah PAUD/TK. Aplikasi ini mencakup manajemen data siswa, guru, kelas, keuangan (SPP), hingga absensi guru berbasis geofencing.
 
-### ✨ Mengapa Memilih Sistem Ini?
+### ✨ Mengapa Menggunakan Sistem Ini?
 
-- 🎨 **UI/UX Modern** - Desain glassmorphism yang cantik dan responsif
-- 📱 **Mobile Friendly** - Tampilan optimal di semua perangkat
-- 🔐 **Aman** - Sistem token untuk pendaftaran, mencegah spam
-- 📊 **Dashboard Lengkap** - Statistik dan laporan real-time
-- 🚀 **Performa Tinggi** - Dibangun dengan Laravel terbaru
+- 🎨 **UI/UX Modern** - Desain bersih dan responsif menggunakan TailwindCSS.
+- 📱 **API Ready** - Endpoint API siap pakai untuk integrasi aplikasi mobile (Flutter/Android).
+- 📍 **Absensi Geofencing** - Sistem validasi lokasi GPS untuk kehadiran guru.
+- 🔐 **Secure** - Auth menggunakan Laravel Sanctum & built-in security features.
+- 📊 **Dashboard Lengkap** - Statistik real-time untuk kepala sekolah.
 
 ---
 
@@ -51,59 +51,43 @@
 <td width="50%">
 
 ### 📝 SPMB Online
-- Pendaftaran dengan sistem token akses
-- Formulir biodata lengkap & terstruktur
-- Daftar tunggu otomatis saat kuota penuh
-- Cek status pendaftaran real-time
+
+- Pendaftaran siswa baru online
+- Sistem token akses unik
+- Manajemen pendaftar & status seleksi
+- Export data pendaftar
 
 </td>
 <td width="50%">
 
-### 👨‍🎓 Manajemen Siswa
-- Data siswa per kelas dengan statistik
-- Filter & pencarian cerdas
-- Tracking status (Aktif/Lulus/Nonaktif)
-- Info orang tua terintegrasi
+### 👨‍🎓 Manajemen Akademik
 
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-### 💰 Kelola SPP
-- Tagihan per siswa terorganisir per kelas
-- Buat tagihan massal dengan 1 klik
-- Status pembayaran real-time
-- Riwayat pembayaran lengkap
-
-</td>
-<td width="50%">
-
-### 👩‍🏫 Data Guru & Kelas
-- Profil guru lengkap
-- Manajemen kelas dinamis
-- Alokasi wali kelas
-- Tahun ajaran fleksibel
+- Data induk siswa & guru
+- Manajemen kelas & tahun ajaran
+- Kenaikan kelas & status siswa
+- Riwayat pendidikan guru
 
 </td>
 </tr>
 <tr>
 <td width="50%">
 
-### 🖼️ Galeri Foto
-- Upload foto kegiatan sekolah
-- Organisasi per album
-- Tampilan grid responsif
-- Lightbox preview
+### 💰 Keuangan & SPP
+
+- Tagihan SPP otomatis per kelas
+- Riwayat pembayaran & tunggakan
+- Laporan keuangan sederhana
+- Kwitansi digital
 
 </td>
 <td width="50%">
 
-### 📊 Dashboard Admin
-- Statistik pendaftaran
-- Grafik pembayaran SPP
-- Notifikasi pendaftar baru
-- Quick actions
+### 📍 Absensi Guru (Geofencing)
+
+- Validasi lokasi (Latitude/Longitude)
+- Radius toleransi yang dapat diatur
+- Rekap kehadiran otomatis
+- Pengajuan izin/sakit
 
 </td>
 </tr>
@@ -111,32 +95,16 @@
 
 ---
 
-## 🛠️ Teknologi
+## 🛠️ Teknologi Stack
 
-| Kategori | Teknologi |
+| Komponen | Teknologi |
 |----------|-----------|
-| **Backend** | Laravel 12, PHP 8.3 |
-| **Frontend** | Blade Templates, TailwindCSS, Alpine.js |
+| **Framework** | Laravel 11.x |
+| **Language** | PHP 8.2+ |
+| **Frontend** | Blade, TailwindCSS, Alpine.js |
+| **API Auth** | Laravel Sanctum |
 | **Database** | MySQL / MariaDB |
 | **Icons** | Phosphor Icons |
-| **Charts** | Chart.js |
-| **Auth** | Laravel Built-in Auth |
-
----
-
-## 📸 Screenshot
-
-<p align="center">
-  <img src="docs/screenshots/homepage.png" alt="Homepage" width="45%">
-  <img src="docs/screenshots/dashboard.png" alt="Dashboard" width="45%">
-</p>
-
-<p align="center">
-  <img src="docs/screenshots/spmb-form.png" alt="Form SPMB" width="45%">
-  <img src="docs/screenshots/students.png" alt="Data Siswa" width="45%">
-</p>
-
-> 💡 *Screenshot akan ditambahkan setelah deployment*
 
 ---
 
@@ -144,7 +112,8 @@
 
 ### Prasyarat
 
-Pastikan sudah terinstall:
+Pastikan server Anda memenuhi syarat:
+
 - PHP >= 8.2
 - Composer
 - MySQL/MariaDB
@@ -154,8 +123,8 @@ Pastikan sudah terinstall:
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/username/paud-laravel.git
-cd paud-laravel
+git clone https://github.com/username/paud-sims.git
+cd paud-sims
 
 # 2. Install dependencies
 composer install
@@ -170,87 +139,56 @@ php artisan key:generate
 # DB_USERNAME=root
 # DB_PASSWORD=
 
-# 5. Migrasi database
-php artisan migrate
+# 5. Migrasi database & Seeding
+php artisan migrate --seed
 
-# 6. (Opsional) Seed data dummy
-php artisan db:seed
-
-# 7. Build assets
+# 6. Build assets frontend
 npm run build
 
-# 8. Jalankan server
+# 7. Jalankan server (Local)
 php artisan serve
 ```
 
-🌐 Akses: `http://localhost:8000`
+🌐 Akses Web: `http://localhost:8000`
+📱 Akses API: `http://localhost:8000/api`
 
 ---
 
-## 👤 Akun Default
+## 👤 Akun Default (Seeder)
 
-Setelah instalasi dengan seeder:
+Jika menggunakan `php artisan migrate --seed`:
 
 | Role | Email | Password |
 |------|-------|----------|
-| Admin | admin@pauddamhil.sch.id | admin123 |
+| **Admin** | `admin@sekolah.sch.id` | `password` |
 
-> ⚠️ **Penting:** Ganti password default setelah login pertama!
+> ⚠️ **Catatan:** Password untuk user Guru dapat diatur melalui dashboard admin.
 
 ---
 
-## 📁 Struktur Proyek
+## 📁 Struktur API (Sekilas)
 
-```
-paud-laravel/
-├── app/
-│   ├── Http/Controllers/   # Logic aplikasi
-│   ├── Models/             # Model Eloquent
-│   └── ...
-├── database/
-│   ├── migrations/         # Struktur database
-│   └── seeders/           # Data dummy
-├── resources/
-│   ├── views/             # Template Blade
-│   └── css/               # Styling
-├── routes/
-│   └── web.php            # Definisi routes
-└── public/                # Assets publik
-```
+Aplikasi ini menyediakan REST API untuk integrasi Mobile Apps:
+
+- `POST /api/login` - Autentikasi Guru
+- `POST /api/absensi` - Chek-in/Check-out dengan GPS
+- `GET /api/absensi/history` - Riwayat kehadiran
+- `POST /api/izin` - Pengajuan izin/sakit
+- `GET /api/settings` - Konfigurasi lokasi sekolah
 
 ---
 
 ## 🤝 Kontribusi
 
-Kontribusi sangat diterima! Silakan:
-
-1. Fork repository ini
-2. Buat branch fitur (`git checkout -b feature/AmazingFeature`)
-3. Commit perubahan (`git commit -m 'Add some AmazingFeature'`)
-4. Push ke branch (`git push origin feature/AmazingFeature`)
-5. Buat Pull Request
-
----
-
-## 📞 Kontak
-
-**PAUD Damhil - Universitas Negeri Gorontalo**
-
-- 🌐 Website: [Coming Soon]
-- 📧 Email: info@pauddamhil.sch.id
-- 📍 Lokasi: Kampus UNG, Gorontalo
+Proyek ini terbuka untuk kontribusi (Open Source). Silakan fork dan buat Pull Request untuk fitur baru atau perbaikan bug.
 
 ---
 
 ## 📄 Lisensi
 
-Proyek ini dikembangkan untuk keperluan pendidikan PAUD Damhil UNG.
+MIT License. Silakan gunakan dan modifikasi untuk keperluan sekolah Anda sendiri.
 
 ---
-
-<p align="center">
-  Made with ❤️ for PAUD Damhil UNG
-</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Built%20with-Laravel-FF2D20?style=for-the-badge&logo=laravel" alt="Built with Laravel">
