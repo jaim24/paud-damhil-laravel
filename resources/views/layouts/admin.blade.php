@@ -182,6 +182,17 @@
                     <span class="font-semibold text-sm">Pengaturan</span>
                 </a>
 
+                <a href="{{ route('admin.password-resets.index') }}" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-white transition-all border-l-4 border-transparent {{ request()->routeIs('admin.password-resets.*') ? 'active' : '' }}">
+                    <div class="link-icon w-9 h-9 bg-slate-800/50 group-hover:bg-red-500/20 rounded-lg flex items-center justify-center transition-all">
+                        <i class="ph-fill ph-password text-lg"></i>
+                    </div>
+                    <span class="font-semibold text-sm">Reset Password</span>
+                    @php $resetCount = \App\Models\Teacher::whereNotNull('password_reset_requested_at')->count(); @endphp
+                    @if($resetCount > 0)
+                    <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $resetCount }}</span>
+                    @endif
+                </a>
+
             </nav>
 
             <!-- Bottom Actions - Fixed -->

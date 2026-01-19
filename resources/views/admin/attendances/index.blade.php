@@ -91,6 +91,21 @@
         </div>
     </div>
 
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Bar Chart - 6 Month Trend -->
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <h3 class="font-bold text-slate-800 mb-4">📊 Tren Kehadiran 6 Bulan Terakhir</h3>
+            <canvas id="attendanceChart" height="120"></canvas>
+        </div>
+        
+        <!-- Pie Chart - Today's Distribution -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <h3 class="font-bold text-slate-800 mb-4">📈 Distribusi Hari Ini</h3>
+            <canvas id="todayChart" height="200"></canvas>
+        </div>
+    </div>
+
     <!-- Attendance Table -->
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-200">
@@ -185,4 +200,96 @@
         </div>
     </div>
 </div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Monthly Trend Bar Chart
+const chartData = @json($chartData);
+const ctx = document.getElementById('attendanceChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: chartData.map(d => d.label),
+        datasets: [
+            {
+                label: 'Hadir',
+                data: chartData.map(d => d.hadir),
+                backgroundColor: 'rgba(34, 197, 94, 0.8)',
+                borderRadius: 4,
+            },
+            {
+                label: 'Terlambat',
+                data: chartData.map(d => d.terlambat),
+                backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                borderRadius: 4,
+            },
+            {
+                label: 'Izin',
+                data: chartData.map(d => d.izin),
+                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                borderRadius: 4,
+            },
+            {
+                label: 'Sakit',
+                data: chartData.map(d => d.sakit),
+                backgroundColor: 'rgba(168, 85, 247, 0.8)',
+                borderRadius: 4,
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom',
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1
+                }
+            }
+        }
+    }
+});
+
+// Today's Distribution Doughnut Chart
+const todayStats = @json($stats);
+const todayCtx = document.getElementById('todayChart').getContext('2d');
+new Chart(todayCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Hadir', 'Terlambat', 'Izin', 'Sakit', 'Alpha'],
+        datasets: [{
+            data: [
+                todayStats.hadir - todayStats.terlambat, // Pure hadir (exclude terlambat since it's counted separately)
+                todayStats.terlambat,
+                todayStats.izin,
+                todayStats.sakit,
+                todayStats.alpha
+            ],
+            backgroundColor: [
+                'rgba(34, 197, 94, 0.8)',
+                'rgba(245, 158, 11, 0.8)',
+                'rgba(59, 130, 246, 0.8)',
+                'rgba(168, 85, 247, 0.8)',
+                'rgba(239, 68, 68, 0.8)',
+            ],
+            borderWidth: 0,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom',
+            }
+        }
+    }
+});
+</script>
 @endsection

@@ -26,6 +26,7 @@ class Teacher extends Authenticatable
         'api_token',
         'device_token',
         'last_login_at',
+        'password_reset_requested_at',
     ];
 
     protected $hidden = [
@@ -36,6 +37,7 @@ class Teacher extends Authenticatable
     protected $casts = [
         'show_public' => 'boolean',
         'last_login_at' => 'datetime',
+        'password_reset_requested_at' => 'datetime',
     ];
 
     // Relationships

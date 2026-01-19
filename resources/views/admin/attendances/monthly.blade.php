@@ -17,6 +17,9 @@
             <a href="{{ route('attendances.export', ['month' => $month, 'year' => $year]) }}" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2">
                 <i class="ph ph-file-xls"></i> Export Excel
             </a>
+            <a href="{{ route('attendances.export_pdf', ['month' => $month, 'year' => $year]) }}" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2">
+                <i class="ph ph-file-pdf"></i> Export PDF
+            </a>
         </div>
     </div>
 

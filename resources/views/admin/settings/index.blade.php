@@ -339,24 +339,30 @@
 
             <div class="space-y-5">
                 <!-- Lokasi Sekolah -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Pilih Lokasi Sekolah</label>
+                    <div id="map" class="w-full h-[400px] rounded-xl border border-slate-300 z-0 mb-4"></div>
+                    <p class="text-xs text-slate-500 mb-4"><i class="ph ph-info"></i> Geser pin merah di peta untuk menentukan lokasi sekolah, atau isi latitude & longitude secara manual di bawah.</p>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">Latitude Sekolah</label>
-                        <input type="text" name="school_latitude" value="{{ old('school_latitude', $settings->school_latitude) }}"
+                        <input type="text" name="school_latitude" id="latInput" value="{{ old('school_latitude', $settings->school_latitude) }}"
                                class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all font-mono"
                                placeholder="-6.175110">
                         @error('school_latitude') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">Longitude Sekolah</label>
-                        <input type="text" name="school_longitude" value="{{ old('school_longitude', $settings->school_longitude) }}"
+                        <input type="text" name="school_longitude" id="lngInput" value="{{ old('school_longitude', $settings->school_longitude) }}"
                                class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all font-mono"
                                placeholder="106.827220">
                         @error('school_longitude') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">Radius Toleransi (meter)</label>
-                        <input type="number" name="geofence_radius" value="{{ old('geofence_radius', $settings->geofence_radius ?? 100) }}"
+                        <input type="number" name="geofence_radius" id="radiusInput" value="{{ old('geofence_radius', $settings->geofence_radius ?? 100) }}"
                                class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
                                placeholder="100" min="10" max="500">
                         @error('geofence_radius') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -403,6 +409,9 @@
     </form>
 </div>
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
 <script>
 function formatCurrency(input) {
     // Remove non-digit characters
@@ -426,6 +435,87 @@ document.addEventListener('DOMContentLoaded', function() {
     if (display) {
         formatCurrency(display);
     }
+
+    // Initialize Map
+    initMap();
 });
+
+function initMap() {
+    const latInput = document.getElementById('latInput');
+    const lngInput = document.getElementById('lngInput');
+    const radiusInput = document.getElementById('radiusInput');
+
+    // Default to stored value or Monas Jakarta if empty
+    let lat = latInput.value || -6.175392;
+    let lng = lngInput.value || 106.827153;
+    let radius = parseInt(radiusInput.value) || 100;
+
+    // Create Map
+    const map = L.map('map').setView([lat, lng], 16);
+
+    // Add Tile Layer (OpenStreetMap)
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // Add Marker (Draggable)
+    const marker = L.marker([lat, lng], {
+        draggable: true,
+        autoPan: true
+    }).addTo(map);
+
+    // Add Circle (Geofence Radius)
+    const circle = L.circle([lat, lng], {
+        color: '#0ea5e9',
+        fillColor: '#0ea5e9',
+        fillOpacity: 0.2,
+        radius: radius
+    }).addTo(map);
+
+    // Update marker and circle when map is clicked
+    map.on('click', function(e) {
+        const newLat = e.latlng.lat;
+        const newLng = e.latlng.lng;
+        
+        updatePosition(newLat, newLng);
+    });
+
+    // Update inputs when marker is dragged
+    marker.on('dragend', function(e) {
+        const position = marker.getLatLng();
+        updatePosition(position.lat, position.lng);
+    });
+
+    // Update marker when inputs change
+    latInput.addEventListener('change', function() {
+        updateFromInputs();
+    });
+    lngInput.addEventListener('change', function() {
+        updateFromInputs();
+    });
+    
+    // Update circle radius when input changes
+    radiusInput.addEventListener('change', function() {
+        const val = parseInt(this.value) || 100;
+        circle.setRadius(val);
+    });
+
+    function updatePosition(newLat, newLng) {
+        marker.setLatLng([newLat, newLng]);
+        circle.setLatLng([newLat, newLng]);
+        latInput.value = newLat.toFixed(6);
+        lngInput.value = newLng.toFixed(6);
+        map.panTo([newLat, newLng]);
+    }
+
+    function updateFromInputs() {
+        const newLat = parseFloat(latInput.value) || 0;
+        const newLng = parseFloat(lngInput.value) || 0;
+        marker.setLatLng([newLat, newLng]);
+        circle.setLatLng([newLat, newLng]);
+        map.panTo([newLat, newLng]);
+    }
+}
 </script>
 @endsection

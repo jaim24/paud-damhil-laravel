@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\AttendanceApiController;
 
 // Public routes (no auth)
 Route::post('/login', [AttendanceApiController::class, 'login']);
+Route::post('/forgot-password', [AttendanceApiController::class, 'forgotPassword']);
 Route::get('/settings', [AttendanceApiController::class, 'getSettings']); // Untuk ambil koordinat sekolah
 
 // Protected routes (requires Bearer token)

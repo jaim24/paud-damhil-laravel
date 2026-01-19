@@ -112,11 +112,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/teacher/{teacher}', [\App\Http\Controllers\AttendanceController::class, 'show'])->name('show');
         Route::post('/', [\App\Http\Controllers\AttendanceController::class, 'store'])->name('store');
         Route::get('/export', [\App\Http\Controllers\AttendanceController::class, 'export'])->name('export');
+        Route::get('/export-pdf', [\App\Http\Controllers\AttendanceController::class, 'exportPdf'])->name('export_pdf');
         
         // Leave Requests
         Route::get('/leave-requests', [\App\Http\Controllers\AttendanceController::class, 'leaveRequests'])->name('leave_requests');
         Route::post('/leave-requests/{leaveRequest}/approve', [\App\Http\Controllers\AttendanceController::class, 'approveLeave'])->name('approve_leave');
         Route::post('/leave-requests/{leaveRequest}/reject', [\App\Http\Controllers\AttendanceController::class, 'rejectLeave'])->name('reject_leave');
+    });
+
+    // Password Resets
+    Route::prefix('admin/password-resets')->name('admin.password-resets.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\PasswordResetController::class, 'index'])->name('index');
+        Route::post('/{teacher}/reset', [\App\Http\Controllers\PasswordResetController::class, 'reset'])->name('reset');
     });
 });
 

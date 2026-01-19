@@ -65,6 +65,53 @@ class AttendanceApiController extends Controller
     }
 
     /**
+     * POST /api/forgot-password
+     * Request reset password (flag only)
+     */
+    public function forgotPassword(Request $request)
+    {
+        $request->validate([
+            'nip' => 'nullable|string',
+            'email' => 'nullable|string', // Relax validation to prevent blocking NIP requests
+        ]);
+
+        if (!$request->nip && !$request->email) {
+            return response()->json([
+                'success' => false,
+                'message' => 'NIP atau Email wajib diisi'
+            ], 400);
+        }
+
+        $teacher = null;
+        if ($request->nip) {
+            $teacher = Teacher::where('nip', $request->nip)->first();
+        } elseif ($request->email) {
+            $teacher = Teacher::where('email', $request->email)->first();
+        }
+
+        if (!$teacher) {
+            // Return success even if not found to prevent user enumeration (security best practice),
+            // OR return 404 if the user explicitly asked for "Jika ketemu... Jika tidak" behavior (User said: "Jika ketemu... Return JSON success").
+            // User did NOT say what to do if NOT found, but in previous code I returned 404.
+            // However, the prompt says "Logic: Cari user... Jika ketemu, set status... Return JSON".
+            // I will stick to 404 for now as it's an internal app, easier for debugging.
+            return response()->json([
+                'success' => false,
+                'message' => 'Data guru tidak ditemukan'
+            ], 404);
+        }
+
+        $teacher->update([
+            'password_reset_requested_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Permintaan terkirim ke Admin.'
+        ]);
+    }
+
+    /**
      * POST /api/logout
      * Logout guru (revoke token)
      */
@@ -322,7 +369,7 @@ class AttendanceApiController extends Controller
                     'type' => $leave->type,
                     'reason' => $leave->reason,
                     'status' => $leave->status,
-                    'admin_note' => $leave->admin_notes,
+                    'rejection_reason' => $leave->admin_notes,
                     'created_at' => $leave->created_at->format('Y-m-d H:i'),
                 ];
             });

@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\Teacher;
 use App\Models\LeaveRequest;
+use App\Models\Setting;
+use App\Exports\AttendanceMonthlyExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
 class AttendanceController extends Controller
@@ -27,7 +31,7 @@ class AttendanceController extends Controller
             ->get()
             ->keyBy('teacher_id');
 
-        // Stats
+        // Stats for selected date
         $stats = [
             'total_teachers' => $teachers->count(),
             'hadir' => $attendances->whereIn('status', ['hadir', 'terlambat'])->count(),
@@ -37,11 +41,32 @@ class AttendanceController extends Controller
             'alpha' => $teachers->count() - $attendances->count(),
         ];
 
+        // Monthly chart data (last 6 months)
+        $chartData = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $monthDate = Carbon::now()->subMonths($i);
+            $month = $monthDate->month;
+            $year = $monthDate->year;
+            
+            $monthlyAttendances = Attendance::whereMonth('date', $month)
+                ->whereYear('date', $year)
+                ->get();
+            
+            $chartData[] = [
+                'label' => $monthDate->isoFormat('MMM Y'),
+                'hadir' => $monthlyAttendances->where('status', 'hadir')->count(),
+                'terlambat' => $monthlyAttendances->where('status', 'terlambat')->count(),
+                'izin' => $monthlyAttendances->where('status', 'izin')->count(),
+                'sakit' => $monthlyAttendances->where('status', 'sakit')->count(),
+            ];
+        }
+
         return view('admin.attendances.index', compact(
             'teachers', 
             'attendances', 
             'stats', 
-            'selectedDate'
+            'selectedDate',
+            'chartData'
         ));
     }
 
@@ -206,11 +231,60 @@ class AttendanceController extends Controller
     }
 
     /**
-     * Export laporan (placeholder)
+     * Export laporan ke Excel
      */
     public function export(Request $request)
     {
-        // TODO: Implement Excel/PDF export
-        return redirect()->back()->with('info', 'Fitur export sedang dalam pengembangan.');
+        $month = $request->input('month', Carbon::now()->month);
+        $year = $request->input('year', Carbon::now()->year);
+        
+        $monthName = Carbon::createFromDate($year, $month, 1)->isoFormat('MMMM');
+        $filename = "Rekap_Absensi_{$monthName}_{$year}.xlsx";
+        
+        return Excel::download(new AttendanceMonthlyExport($month, $year), $filename);
+    }
+
+    /**
+     * Export laporan ke PDF
+     */
+    public function exportPdf(Request $request)
+    {
+        $month = $request->input('month', Carbon::now()->month);
+        $year = $request->input('year', Carbon::now()->year);
+
+        $teachers = Teacher::active()
+            ->with(['attendances' => function($q) use ($month, $year) {
+                $q->whereMonth('date', $month)->whereYear('date', $year);
+            }])
+            ->orderBy('name')
+            ->get();
+
+        // Calculate working days
+        $startDate = Carbon::createFromDate($year, $month, 1);
+        $endDate = $startDate->copy()->endOfMonth();
+        $workingDays = 0;
+        
+        for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+            if (!$date->isWeekend()) {
+                $workingDays++;
+            }
+        }
+
+        $monthName = Carbon::createFromDate($year, $month, 1)->isoFormat('MMMM');
+        $settings = Setting::first();
+
+        $pdf = Pdf::loadView('exports.attendance_monthly_pdf', compact(
+            'teachers', 
+            'month', 
+            'year', 
+            'monthName',
+            'workingDays',
+            'settings'
+        ));
+
+        $pdf->setPaper('A4', 'portrait');
+        
+        $filename = "Rekap_Absensi_{$monthName}_{$year}.pdf";
+        return $pdf->download($filename);
     }
 }
