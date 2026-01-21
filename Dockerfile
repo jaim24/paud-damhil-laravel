@@ -13,26 +13,15 @@ RUN apk add --no-cache \
     oniguruma-dev \
     freetype-dev \
     libjpeg-turbo-dev \
+    icu-dev \
     nodejs \
     npm \
     nginx \
     supervisor
 
-# Install PHP extensions including zip
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) \
-        pdo \
-        pdo_mysql \
-        mbstring \
-        exif \
-        pcntl \
-        bcmath \
-        gd \
-        xml \
-        zip \
-        ctype \
-        fileinfo \
-        tokenizer
+# Install PHP extensions (only those not built-in)
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip intl
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -40,7 +29,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy composer files first for better caching
+# Copy composer files first for caching
 COPY composer.json composer.lock ./
 
 # Install PHP dependencies
@@ -55,7 +44,7 @@ RUN npm ci
 # Copy rest of application
 COPY . .
 
-# Run composer scripts after full copy
+# Run composer scripts
 RUN composer dump-autoload --optimize
 
 # Build frontend assets
@@ -67,10 +56,10 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 
 # Create required directories
 RUN mkdir -p /var/www/html/storage/logs \
-    && mkdir -p /var/www/html/storage/framework/cache \
-    && mkdir -p /var/www/html/storage/framework/sessions \
-    && mkdir -p /var/www/html/storage/framework/views \
-    && mkdir -p /run/nginx
+    /var/www/html/storage/framework/cache \
+    /var/www/html/storage/framework/sessions \
+    /var/www/html/storage/framework/views \
+    /run/nginx
 
 # Copy nginx config
 COPY docker/nginx.conf /etc/nginx/http.d/default.conf
