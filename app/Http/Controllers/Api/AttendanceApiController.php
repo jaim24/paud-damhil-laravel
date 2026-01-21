@@ -174,6 +174,28 @@ class AttendanceApiController extends Controller
     }
 
     /**
+     * GET /api/absensi/today
+     * Status absensi hari ini
+     */
+    public function todayStatus(Request $request)
+    {
+        $teacher = $request->user();
+        $attendance = $teacher->today_attendance;
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'has_checked_in' => $attendance !== null,
+                'has_checked_out' => $attendance?->check_out !== null,
+                'check_in_time' => $attendance?->check_in,
+                'check_out_time' => $attendance?->check_out,
+                'status' => $attendance?->status,
+                'date' => now()->format('Y-m-d'),
+            ]
+        ]);
+    }
+
+    /**
      * POST /api/absensi
      * Kirim data absen (check-in atau check-out)
      */
