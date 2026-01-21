@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // Trust Railway proxy for HTTPS
         $middleware->trustProxies(at: '*');
         
+        $middleware->web(append: [
+            \App\Http\Middleware\SetLocale::class,
+        ]);
+        
         $middleware->api(prepend: [
             \App\Http\Middleware\HandleCors::class,
         ]);

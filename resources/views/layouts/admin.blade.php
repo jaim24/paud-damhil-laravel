@@ -7,10 +7,17 @@
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
+        // Check for dark mode preference
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -35,6 +42,24 @@
         }
         .sidebar-link.active .link-icon {
             background: rgba(59, 130, 246, 0.2) !important;
+        }
+        
+        /* Dark mode transitions */
+        html.dark body {
+            background-color: #0f172a; /* slate-900 */
+            color: #f8fafc; /* slate-50 */
+        }
+        html.dark .bg-white {
+            background-color: #1e293b; /* slate-800 */
+        }
+        html.dark .text-slate-800 {
+            color: #f1f5f9; /* slate-100 */
+        }
+        html.dark .text-slate-600 {
+            color: #94a3b8; /* slate-400 */
+        }
+        html.dark .border-slate-200 {
+            border-color: #334155; /* slate-700 */
         }
     </style>
 </head>
@@ -63,13 +88,13 @@
             <nav class="flex-1 overflow-y-auto sidebar-scroll p-3 lg:p-4 space-y-1">
                 
                 <!-- Main Menu -->
-                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">Menu Utama</p>
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">{{ __('messages.dashboard') }}</p>
                 
                 <a href="{{ route('dashboard') }}" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-white transition-all border-l-4 border-transparent {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                     <div class="link-icon w-9 h-9 bg-slate-800/50 group-hover:bg-blue-500/20 rounded-lg flex items-center justify-center transition-all">
                         <i class="ph-fill ph-squares-four text-lg"></i>
                     </div>
-                    <span class="font-semibold text-sm">Dashboard</span>
+                    <span class="font-semibold text-sm">{{ __('messages.dashboard') }}</span>
                 </a>
 
                 <!-- Penerimaan Murid -->
@@ -97,7 +122,7 @@
                 </a>
 
                 <!-- Absensi -->
-                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mt-4 mb-2">Absensi Guru</p>
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mt-4 mb-2">{{ __('messages.attendance') }}</p>
                 
                 <a href="{{ route('attendances.index') }}" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-white transition-all border-l-4 border-transparent {{ request()->routeIs('attendances.index') ? 'active' : '' }}">
                     <div class="link-icon w-9 h-9 bg-slate-800/50 group-hover:bg-teal-500/20 rounded-lg flex items-center justify-center transition-all">
@@ -131,21 +156,21 @@
                     <div class="link-icon w-9 h-9 bg-slate-800/50 group-hover:bg-purple-500/20 rounded-lg flex items-center justify-center transition-all">
                         <i class="ph-fill ph-chalkboard-teacher text-lg"></i>
                     </div>
-                    <span class="font-semibold text-sm">Data Guru</span>
+                    <span class="font-semibold text-sm">{{ __('messages.teachers_data') }}</span>
                 </a>
 
                 <a href="{{ route('students.index') }}" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-white transition-all border-l-4 border-transparent {{ request()->routeIs('students.*') ? 'active' : '' }}">
                     <div class="link-icon w-9 h-9 bg-slate-800/50 group-hover:bg-sky-500/20 rounded-lg flex items-center justify-center transition-all">
                         <i class="ph-fill ph-student text-lg"></i>
                     </div>
-                    <span class="font-semibold text-sm">Data Siswa</span>
+                    <span class="font-semibold text-sm">{{ __('messages.students_data') }}</span>
                 </a>
 
                 <a href="{{ route('classes.index') }}" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-white transition-all border-l-4 border-transparent {{ request()->routeIs('classes.*') ? 'active' : '' }}">
                     <div class="link-icon w-9 h-9 bg-slate-800/50 group-hover:bg-pink-500/20 rounded-lg flex items-center justify-center transition-all">
                         <i class="ph-fill ph-books text-lg"></i>
                     </div>
-                    <span class="font-semibold text-sm">Data Kelas</span>
+                    <span class="font-semibold text-sm">{{ __('messages.classes_data') }}</span>
                 </a>
 
                 <!-- Konten Website -->
@@ -179,7 +204,7 @@
                     <div class="link-icon w-9 h-9 bg-slate-800/50 group-hover:bg-slate-500/20 rounded-lg flex items-center justify-center transition-all">
                         <i class="ph-fill ph-gear-six text-lg"></i>
                     </div>
-                    <span class="font-semibold text-sm">Pengaturan</span>
+                    <span class="font-semibold text-sm">{{ __('messages.settings') }}</span>
                 </a>
 
                 <a href="{{ route('admin.password-resets.index') }}" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-white transition-all border-l-4 border-transparent {{ request()->routeIs('admin.password-resets.*') ? 'active' : '' }}">
@@ -210,7 +235,7 @@
                     @csrf
                     <button type="submit" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-lg transition-all font-semibold text-sm">
                         <i class="ph ph-sign-out text-lg"></i>
-                        <span>Keluar</span>
+                        <span>{{ __('messages.logout') }}</span>
                     </button>
                 </form>
             </div>
@@ -231,7 +256,29 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2 lg:gap-4">
-                    <span class="text-xs lg:text-sm text-slate-500 hidden sm:block font-medium">Halo, <span class="text-slate-700">Admin</span></span>
+                    <!-- Language Switcher -->
+                    <div class="relative group">
+                        <button class="p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-1">
+                            <i class="ph-fill ph-translate text-xl"></i>
+                            <span class="text-xs font-bold uppercase">{{ app()->getLocale() }}</span>
+                        </button>
+                        <div class="absolute right-0 top-full mt-2 w-32 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 hidden group-hover:block z-50 overflow-hidden">
+                            <a href="{{ route('lang.switch', 'id') }}" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 {{ app()->getLocale() == 'id' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : '' }}">
+                                <span>🇮🇩</span> Indonesia
+                            </a>
+                            <a href="{{ route('lang.switch', 'en') }}" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 {{ app()->getLocale() == 'en' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : '' }}">
+                                <span>🇺🇸</span> English
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Dark Mode Toggle -->
+                    <button onclick="toggleTheme()" class="p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                        <i class="ph-fill ph-moon hidden dark:block text-xl"></i>
+                        <i class="ph-fill ph-sun dark:hidden text-xl"></i>
+                    </button>
+                    
+                    <span class="text-xs lg:text-sm text-slate-500 hidden sm:block font-medium">Halo, <span class="text-slate-700 dark:text-slate-200">Admin</span></span>
                     <div class="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg lg:rounded-xl flex items-center justify-center text-white font-bold text-sm lg:text-base shadow-lg shadow-blue-500/20">
                         A
                     </div>
@@ -313,6 +360,17 @@
             const overlay = document.getElementById('overlay');
             sidebar.classList.toggle('-translate-x-full');
             overlay.classList.toggle('hidden');
+        }
+
+        // Dark Mode Toggle
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
         }
 
         // Delete Modal Functions

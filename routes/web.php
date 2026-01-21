@@ -25,6 +25,9 @@ Route::get('/spmb/success', function() { return view('spmb.success'); })->name('
 Route::get('/cek-spp', [SppController::class, 'index'])->name('check.spp');
 Route::post('/cek-spp', [SppController::class, 'check'])->name('check.spp_process');
 
+// Language Route
+Route::get('lang/{locale}', [App\Http\Controllers\LanguageController::class, 'switch'])->name('lang.switch');
+
 // Auth Routes
 Route::get('/login', [AdminController::class, 'showLogin'])->name('login');
 Route::post('/login', [AdminController::class, 'login'])->name('login.perform');
