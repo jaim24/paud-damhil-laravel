@@ -1,5 +1,6 @@
 # Laravel Production Dockerfile for Railway
-FROM php:8.3-fpm-alpine
+# Simplified version using php artisan serve
+FROM php:8.3-cli-alpine
 
 # Install system dependencies
 RUN apk add --no-cache \
@@ -15,11 +16,9 @@ RUN apk add --no-cache \
     libjpeg-turbo-dev \
     icu-dev \
     nodejs \
-    npm \
-    nginx \
-    supervisor
+    npm
 
-# Install PHP extensions (only those not built-in)
+# Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip intl
 
@@ -51,24 +50,19 @@ RUN composer dump-autoload --optimize
 RUN npm run build
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Create required directories
 RUN mkdir -p /var/www/html/storage/logs \
     /var/www/html/storage/framework/cache \
     /var/www/html/storage/framework/sessions \
-    /var/www/html/storage/framework/views \
-    /run/nginx
+    /var/www/html/storage/framework/views
 
-# Copy nginx config
-COPY docker/nginx.conf /etc/nginx/http.d/default.conf
+# Cache config and routes
+RUN php artisan config:clear && php artisan route:clear
 
-# Copy supervisor config
-COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# Expose port (Railway will set PORT env var)
+EXPOSE 8080
 
-# Expose port 80
-EXPOSE 80
-
-# Start command
-CMD ["sh", "-c", "php artisan config:cache && php artisan route:cache && php artisan migrate --force && php artisan storage:link || true && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
+# Start command - use PORT from Railway
+CMD php artisan migrate --force && php artisan storage:link || true && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
