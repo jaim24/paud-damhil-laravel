@@ -1,5 +1,4 @@
 # Laravel Production Dockerfile for Railway
-# Simplified version using php artisan serve
 FROM php:8.3-cli-alpine
 
 # Install system dependencies
@@ -58,12 +57,13 @@ RUN mkdir -p /var/www/html/storage/logs \
     /var/www/html/storage/framework/sessions \
     /var/www/html/storage/framework/views
 
-# Expose port (Railway will set PORT env var)
+# Expose port
 EXPOSE 8080
 
-# Start script that runs migrations then starts server
+# Start script: migrate, seed admin, then serve
 CMD sh -c "php artisan config:clear && \
     php artisan cache:clear && \
     php artisan migrate --force && \
+    php artisan db:seed --force && \
     php artisan storage:link || true && \
     php artisan serve --host=0.0.0.0 --port=\${PORT:-8080}"

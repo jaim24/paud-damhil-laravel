@@ -12,6 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Trust Railway proxy for HTTPS
+        $middleware->trustProxies(at: '*');
+        
         $middleware->api(prepend: [
             \App\Http\Middleware\HandleCors::class,
         ]);
